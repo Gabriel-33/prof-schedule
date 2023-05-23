@@ -1,0 +1,118 @@
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  background-color: #f7f7f7;
+  color: black;
+  font-family: 'Times New Roman', Times, serif;
+}
+.menu{
+  height: auto;
+  flex: 1;
+}
+.conteudo{
+  background-color: #f7f7f7;
+  flex: 9;
+}
+.menu a,span{
+  color: white;
+}
+.footer{
+  flex: 1;
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+}
+.login_container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+.agente_form{
+  display: flex;
+  flex-direction: column;
+  height: 83%;
+  justify-content: center;
+}
+.login_row{
+  display: flex;
+  height: 100%;
+  width: 450px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-self: center;
+}
+.cadastro_forms{
+  background-color: #fffcfc!important;
+  border: 10px solid #d2d6de;
+  border-radius: 0px!important;
+}
+.cadastro_forms label,button,input{
+  font-size: 18px;
+  color: black;
+  font-family: 'Times New Roman', Times, serif;
+  border-radius: 2px!important;
+}
+.menu li a:hover{
+  color: #007bff!important;
+}
+.tipo_user{
+  display: flex;
+  justify-content: center;
+}
+.tipo_user button{
+  display: inline-block;
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff;
+  color: #ffffff;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
