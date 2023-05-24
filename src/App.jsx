@@ -14,8 +14,8 @@ function App() {
     <>
       <Menu page={page} setPage={setPage}/>
         <div className="conteudo">
-          {page === 1 && <Agentes agentePage={agentePage} setAgentePage={setAgentePage}/>}
-          {page === 2 && <Agenda/>}
+          {page === 1 && <Agentes agentePage={agentePage} setAgentePage={setAgentePage} className="agentes" />}
+          {page === 2 && <Agenda className="agenda" />}
         </div>
       <Footer/>
     </>

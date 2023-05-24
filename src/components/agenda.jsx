@@ -1,7 +1,9 @@
 const Agenda = ()=>{
     return(
         <>
-            <h1>agenda</h1>
+            <div className="agenda">
+                <h1>Agenda</h1>
+            </div>
         </>
     )
 }

@@ -5,8 +5,8 @@ import Local from "./agentes_componentes/local";
 const Agentes = (prop)=>{
     return(
         <>
-            <div className="container mb-5 col-md-5" style={{marginTop:"30px",height:"100%"}}>
-                <div className="tipo_user">
+            <div className="container col-md-6 col-sm-8 col-xs-12 mx-auto" style={{marginTop:"15px"}}>
+                <div className="tipo_user" style={{marginBottom:"10px"}}>
                     <button className={prop.agentePage === 1?"btn btn-light form-control active":"btn btn-primary form-control"} type="button" onClick={()=>prop.setAgentePage(1)}>PROFESSOR</button>
                     <button className={prop.agentePage === 2?"btn btn-light form-control active":"btn btn-primary form-control"}  type="button" onClick={()=>prop.setAgentePage(2)}>CURSO</button>
                     <button className={prop.agentePage === 3?"btn btn-light form-control active":"btn btn-primary form-control"}  type="button" onClick={()=>prop.setAgentePage(3)}>LOCAL</button>
