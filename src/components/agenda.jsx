@@ -1,8 +1,26 @@
-const Agenda = ()=>{
+import AgendaProf from "./agenda_componentes/agenda_prof";
+import AgendaLab from "./agenda_componentes/agenda_lab";
+import AgendaSemestre from "./agenda_componentes/agenda_sem";
+const Agenda = (prop)=>{
     return(
         <>
             <div className="agenda">
-                <h1>Agenda</h1>
+                <div className="container col-md-12 col-sm-12 col-xs-12 mx-auto" style={{marginTop:"15px"}}>
+                    <div className="tipo_user" style={{marginBottom:"10px"}}>
+                        <button className={prop.agendaPage === 1?"btn btn-light form-control active":"btn btn-primary form-control"} type="button" onClick={()=>prop.setAgendaPage(1)}>POR PROF.</button>
+                        <button className={prop.agendaPage === 2?"btn btn-light form-control active":"btn btn-primary form-control"}  type="button" onClick={()=>prop.setAgendaPage(2)}>POR SEM.</button>
+                        <button className={prop.agendaPage === 3?"btn btn-light form-control active":"btn btn-primary form-control"}  type="button" onClick={()=>prop.setAgendaPage(3)}>POR LAB.</button>
+                    </div>
+                    <div className="agente_form">
+                        <div className="card cadastro_forms">
+                            <div className="card-body">
+                                {prop.agendaPage === 1 && <AgendaProf/>}
+                                {prop.agendaPage === 2 && <AgendaSemestre/>}
+                                {prop.agendaPage === 3 && <AgendaLab/>}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </>
     )

@@ -8,6 +8,7 @@ import Agenda from './components/agenda'
 function App() {
   const [page, setPage] = useState(1)
   const[agentePage,setAgentePage] = useState(1);
+  const[agendaPage,setAgendaPage] = useState(1);
   useEffect(()=>{
   },[page])
   return (
@@ -15,7 +16,7 @@ function App() {
       <Menu page={page} setPage={setPage}/>
         <div className="conteudo">
           {page === 1 && <Agentes agentePage={agentePage} setAgentePage={setAgentePage} className="agentes" />}
-          {page === 2 && <Agenda className="agenda" />}
+          {page === 2 && <Agenda className="agenda" agendaPage={agendaPage} setAgendaPage={setAgendaPage}/>}
         </div>
       <Footer/>
     </>
