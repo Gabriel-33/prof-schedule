@@ -13,6 +13,16 @@ const Professor = ()=>{
                 {errors?.nome_professor?.type === "required" && <p className="text-danger">*campo obrigatório</p>}
                 {errors?.nome_professor?.type === "maxLength" && <p className="text-danger">*Insira até 60 caracteres</p>}
             </div>
+            <div className="input-group mb-3">
+                <label className="input-group-text" htmlFor="inputGroupSelect01">Área:</label>
+                <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
+                    <option value="0">Computação</option>
+                    <option value="1">Software</option>
+                    <option value="2">Civíl</option>
+                    <option value="3">Produção</option>
+                    <option value="4">Mecânica</option>
+                </select>
+            </div>
             {/* <div className="mb-3">
                 <label className="form-label">*SIAPE:</label>
                 <input type="number" defaultValue="" {...register("siape_professor",{required:true, min: 1000, max: 9999 })} className="form-control" placeholder="name@example.com"/>
