@@ -34,16 +34,12 @@ const AgendaProf = ()=>{
             prof:'Alexandre',
             fk_curso:1,
             horario: [
-            { horario: 3, dia: 0 },
-            { horario: 0, dia: 0 },
-            { horario: 0, dia: 1 },
-            { horario: 1, dia: 1 },
-            { horario: 2, dia: 2 },
-            { horario: 2, dia: 2 },
-            { horario: 1, dia: 3 },
-            { horario: 0, dia: 3 },
-            { horario: 2, dia: 4 },
-            { horario: 3, dia: 4 },
+            { horario: 3, dia: 0 ,disciplina:'lógica'},
+            { horario: 0, dia: 0 ,disciplina:'poo'},
+            { horario: 1, dia: 1 ,disciplina:'web'},
+            { horario: 3, dia: 2 ,disciplina:'lógica'},
+            { horario: 0, dia: 2 ,disciplina:'poo'},
+            { horario: 1, dia: 4 ,disciplina:'web'},
             ],
         },
         {
@@ -51,16 +47,10 @@ const AgendaProf = ()=>{
             prof:'Tati',
             fk_curso:1,
             horario: [
-            { horario: 1, dia: 0 },
-            { horario: 0, dia: 0 },
-            { horario: 0, dia: 1 },
-            { horario: 1, dia: 1 },
-            { horario: 2, dia: 2 },
-            { horario: 2, dia: 2 },
-            { horario: 1, dia: 3 },
-            { horario: 0, dia: 3 },
-            { horario: 2, dia: 4 },
-            { horario: 3, dia: 4 },
+                { horario: 3, dia: 0 ,disciplina:'ed'},
+                { horario: 0, dia: 0 ,disciplina:'mat.comp'},
+                { horario: 3, dia: 2 ,disciplina:'ed'},
+                { horario: 0, dia: 2 ,disciplina:'mat.comp'},
             ],
         },
         ],
@@ -74,33 +64,23 @@ const AgendaProf = ()=>{
             prof:'Bomfim',
             fk_curso:2,
             horario: [
-            { horario: 1, dia: 0 },
-            { horario: 0, dia: 0 },
-            { horario: 0, dia: 1 },
-            { horario: 1, dia: 1 },
-            { horario: 2, dia: 2 },
-            { horario: 2, dia: 2 },
-            { horario: 1, dia: 3 },
-            { horario: 0, dia: 3 },
-            { horario: 2, dia: 4 },
-            { horario: 3, dia: 4 },
+                { horario: 3, dia: 0 ,disciplina:'i.a'},
+                { horario: 0, dia: 0 ,disciplina:'eda'},
+                { horario: 3, dia: 2 ,disciplina:'i.a'},
+                { horario: 0, dia: 2 ,disciplina:'eda'},
             ],
         },
         {
             id_prof: 2, 
-            prof:'Pablo',
+            prof:'eurinardo',
             fk_curso:2,
             horario: [
-            { horario: 1, dia: 0 },
-            { horario: 0, dia: 0 },
-            { horario: 0, dia: 1 },
-            { horario: 1, dia: 1 },
-            { horario: 2, dia: 2 },
-            { horario: 2, dia: 2 },
-            { horario: 1, dia: 3 },
-            { horario: 0, dia: 3 },
-            { horario: 2, dia: 4 },
-            { horario: 3, dia: 4 },
+                { horario: 3, dia: 0 ,disciplina:'lfa'},
+                { horario: 0, dia: 0 ,disciplina:'paa'},
+                { horario: 3, dia: 2 ,disciplina:'lfa'},
+                { horario: 0, dia: 2 ,disciplina:'paa'},
+                { horario: 0, dia: 1 ,disciplina:'int.eng.software'},
+                { horario: 0, dia: 3 ,disciplina:'int.eng.software'},
             ],
         },
         ],
@@ -175,59 +155,59 @@ const AgendaProf = ()=>{
                             </tr>
                         </thead>
                         {prof.map((professor, indexProfessor) => {
-    const { prof: professorName, horario: horarioProf } = professor;
-    return (
-        <React.Fragment key={indexProfessor}>
-            <thead>
-                <tr>
-                    <th>{professorName}</th>
-                    <th>Segunda</th>
-                    <th>Terça</th>
-                    <th>Quarta</th>
-                    <th>Quinta</th>
-                    <th>Sexta</th>
-                </tr>
-            </thead>
-            <tbody>
-                {horarios.map((horario, indexHorario) => {
-                    const { hor } = horario;
-                    return (
-                        <tr key={indexHorario}>
-                            <td>{horario}</td>
-                            {dias.map((dia, indexDia) => {
-                                return indexCurso === cursoKey &&
-                                    indexProfessor === profKey &&
-                                    indexHorario === horarioKey &&
-                                    indexDia === diaKey ? (
-                                        <td key={indexDia}>Editar</td>
-                                    ) : (
-                                        <td
-                                            key={indexDia}
-                                            data-curso={indexCurso}
-                                            data-prof={indexProfessor}
-                                            data-horario={indexHorario}
-                                            data-dia={indexDia}
-                                            onClick={editarHorario}
-                                        >
-                                            {horarioProf.map((value, indexHagenda) => {
-                                                return JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify(value) ? (
-                                                    <h6 key={indexHagenda}>
-                                                        {professorName}
-                                                    </h6>
-                                                ) : (
-                                                    <h6 key={indexHagenda}></h6>
-                                                );
-                                            })}
-                                        </td>
-                                    );
-                            })}
-                        </tr>
-                    );
-                })}
-            </tbody>
-        </React.Fragment>
-    );
-})}
+                            const { prof: professorName, horario: horarioProf } = professor;
+                            return (
+                                <React.Fragment key={indexProfessor}>
+                                    <thead>
+                                        <tr>
+                                            <th>{professorName}</th>
+                                            <th>Segunda</th>
+                                            <th>Terça</th>
+                                            <th>Quarta</th>
+                                            <th>Quinta</th>
+                                            <th>Sexta</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {horarios.map((horario, indexHorario) => {
+                                            const { hor } = horario;
+                                            return (
+                                                <tr key={indexHorario}>
+                                                    <td>{horario}</td>
+                                                    {dias.map((dia, indexDia) => {
+                                                        return indexCurso === cursoKey &&
+                                                            indexProfessor === profKey &&
+                                                            indexHorario === horarioKey &&
+                                                            indexDia === diaKey ? (
+                                                                <td key={indexDia}>Editar</td>
+                                                            ) : (
+                                                                <td
+                                                                    key={indexDia}
+                                                                    data-curso={indexCurso}
+                                                                    data-prof={indexProfessor}
+                                                                    data-horario={indexHorario}
+                                                                    data-dia={indexDia}
+                                                                    onClick={editarHorario}
+                                                                >
+                                                                    {horarioProf.map((value, indexHagenda) => {
+                                                                        return JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify({horario:value.horario,dia:value.dia}) ? (
+                                                                            <h6 key={indexHagenda}>
+                                                                                {value.disciplina}-{course}
+                                                                            </h6>
+                                                                        ) : (
+                                                                            <h6 key={indexHagenda}></h6>
+                                                                        );
+                                                                    })}
+                                                                </td>
+                                                            );
+                                                    })}
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </React.Fragment>
+                            );
+                        })}
 
                     </React.Fragment>
                     );
