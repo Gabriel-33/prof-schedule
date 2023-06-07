@@ -1,7 +1,10 @@
 import React from "react";
 import { useState,useEffect } from "react";
-
+import CardComponent from "./card_componente";
+import { useForm } from "react-hook-form";
 const AgendaProf = ()=>{
+    const { register, handleSubmit, watch, formState: { errors } } = useForm();
+
     const [prof,SetProf] = useState(["Alexandre","Eurinardo","Bomfim","Tati"]);
 
     const [cadeira,SetCadeira] = useState(["Computação","Software","Civíl","Produção","Mecânica"]);
@@ -23,6 +26,11 @@ const AgendaProf = ()=>{
     const [horarioKey,setHorarioKey] = useState(false);
     
     const [diaKey,setDiaKey] = useState(false);
+
+    const [tipoOperacao,setTipoOperacao] = useState(false);
+    const onSubmit = (data) => {
+        navigate("/dashboard");
+    };
 
     const agenda = [
     {
@@ -86,7 +94,7 @@ const AgendaProf = ()=>{
         ],
     }
     ];      
-    const editarHorario = (prop)=>{
+    const adicionarHorario = (prop)=>{
 
         const KeyCurso = prop.target.getAttribute("data-curso");
 
@@ -126,7 +134,7 @@ const AgendaProf = ()=>{
     }, [profKey,horarioKey,diaKey]);
     return(
         <React.Fragment>
-            <div className="input-group mb-3">
+            {/* <div className="input-group mb-3">
                 <label className="input-group-text" htmlFor="inputGroupSelect01">Área:</label>
                 <select className="form-select" defaultValue={0} id="inputGroupSelect01">
                     <option value="0">Computação</option>
@@ -136,84 +144,108 @@ const AgendaProf = ()=>{
                     <option value="4">Mecânica</option>
                     <option value="5">Todos</option>
                 </select>
+            </div> */}
+            <div className="table-responsive">
+                <table className="table table-striped table-hover table-bordered border-primary">
+                    {agenda.map((curso, indexCurso) => {
+                        const { curso: course, prof } = curso;
+
+                        return (
+                        <React.Fragment key={indexCurso}>
+                            <thead>
+                                <tr>
+                                    <th colSpan={6}>
+                                    <center>
+                                        <h2>Professores de {course}</h2>
+                                    </center>
+                                    </th>
+                                </tr>
+                            </thead>
+                            {prof.map((professor, indexProfessor) => {
+                                const { prof: professorName, horario: horarioProf } = professor;
+                                return (
+                                    <React.Fragment key={indexProfessor}>
+                                        <thead>
+                                            <tr>
+                                                <th>{professorName}</th>
+                                                <th>Segunda</th>
+                                                <th>Terça</th>
+                                                <th>Quarta</th>
+                                                <th>Quinta</th>
+                                                <th>Sexta</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {horarios.map((horario, indexHorario) => {
+                                                const { hor } = horario;
+                                                return (
+                                                    <tr key={indexHorario}>
+                                                        <td>{horario}</td>
+                                                        {dias.map((dia, indexDia) => {
+                                                            return indexCurso === cursoKey &&
+                                                                indexProfessor === profKey &&
+                                                                indexHorario === horarioKey &&
+                                                                indexDia === diaKey ? (
+                                                                    <td key={indexDia}>
+                                                                        <div className="card">
+                                                                            <div className="card-body">
+                                                                                <form onSubmit={handleSubmit(onSubmit)}>
+                                                                                    <center><label>CORDENAÇÃO</label></center>
+                                                                                    <div className="mb-3">
+                                                                                        <label className="form-label">EMAIL:</label>
+                                                                                        <input type="text" defaultValue="" {...register("email_cordenacao",{required:true})} className="form-control"  placeholder="name@example.com"/>
+                                                                                        {errors?.email_cordenacao?.type === "required" && <p className="text-danger">*campo obrigatório</p>}
+                                                                                    </div>
+                                                                                    <div className="mb-3">
+                                                                                        <label className="form-label">SENHA:</label>
+                                                                                        <input type="password" defaultValue="" {...register("senha_cordenacao",{required:true})} className="form-control" placeholder="name@example.com"/>
+                                                                                        {errors?.senha_cordenacao?.type === "required" && <p className="text-danger">*campo obrigatório</p>}
+                                                                                    </div> 
+                                                                                    <div className="d-grid gap-2">
+                                                                                        <input type="submit" className="btn btn-success" value="ENTRAR"/>
+                                                                                    </div> 
+                                                                                </form>
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                ) : (
+                                                                    <td
+                                                                        key={indexDia}
+                                                                        data-curso={indexCurso}
+                                                                        data-prof={indexProfessor}
+                                                                        data-horario={indexHorario}
+                                                                        data-dia={indexDia}
+                                                                        onClick={adicionarHorario}
+                                                                    >
+                                                                        {horarioProf.map((value, indexHagenda) => {
+                                                                            return JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify({horario:value.horario,dia:value.dia}) ? (
+                                                                                <h6 key={indexHagenda}>
+                                                                                    <CardComponent 
+                                                                                        txt1={value.disciplina} txt2={course} data-prof={indexProfessor}
+                                                                                        data-horario={indexHorario}
+                                                                                        data-dia={indexDia}>
+                                                                                    </CardComponent>
+                                                                                </h6>
+                                                                            ) : (
+                                                                                <h6 key={indexHagenda}></h6>
+                                                                            );
+                                                                        })}
+                                                                    </td>
+                                                                );
+                                                        })}
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </React.Fragment>
+                                );
+                            })}
+
+                        </React.Fragment>
+                        );
+                    })}
+                </table>
             </div>
-            <div>
-            </div>
-            <table className="table table-striped table-hover table-bordered border-primary">
-                {agenda.map((curso, indexCurso) => {
-                    const { curso: course, prof } = curso;
-
-                    return (
-                    <React.Fragment key={indexCurso}>
-                        <thead>
-                            <tr>
-                                <th colSpan={6}>
-                                <center>
-                                    <h2>Professores de {course}</h2>
-                                </center>
-                                </th>
-                            </tr>
-                        </thead>
-                        {prof.map((professor, indexProfessor) => {
-                            const { prof: professorName, horario: horarioProf } = professor;
-                            return (
-                                <React.Fragment key={indexProfessor}>
-                                    <thead>
-                                        <tr>
-                                            <th>{professorName}</th>
-                                            <th>Segunda</th>
-                                            <th>Terça</th>
-                                            <th>Quarta</th>
-                                            <th>Quinta</th>
-                                            <th>Sexta</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {horarios.map((horario, indexHorario) => {
-                                            const { hor } = horario;
-                                            return (
-                                                <tr key={indexHorario}>
-                                                    <td>{horario}</td>
-                                                    {dias.map((dia, indexDia) => {
-                                                        return indexCurso === cursoKey &&
-                                                            indexProfessor === profKey &&
-                                                            indexHorario === horarioKey &&
-                                                            indexDia === diaKey ? (
-                                                                <td key={indexDia}>Editar</td>
-                                                            ) : (
-                                                                <td
-                                                                    key={indexDia}
-                                                                    data-curso={indexCurso}
-                                                                    data-prof={indexProfessor}
-                                                                    data-horario={indexHorario}
-                                                                    data-dia={indexDia}
-                                                                    onClick={editarHorario}
-                                                                >
-                                                                    {horarioProf.map((value, indexHagenda) => {
-                                                                        return JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify({horario:value.horario,dia:value.dia}) ? (
-                                                                            <h6 key={indexHagenda}>
-                                                                                {value.disciplina}-{course}
-                                                                            </h6>
-                                                                        ) : (
-                                                                            <h6 key={indexHagenda}></h6>
-                                                                        );
-                                                                    })}
-                                                                </td>
-                                                            );
-                                                    })}
-                                                </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </React.Fragment>
-                            );
-                        })}
-
-                    </React.Fragment>
-                    );
-                })}
-            </table>
-
         </React.Fragment>
     );
 }
