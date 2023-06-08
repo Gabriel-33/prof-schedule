@@ -5,7 +5,7 @@ const Agenda = (prop)=>{
     return(
         <>
             <div className="agenda">
-                <div className="container-fluid col-md-12 col-sm-12 col-xs-12" style={{marginTop:"15px",width:'1600px!important'}}>
+                <div className="container-fluid col-md-12 col-sm-12 col-xs-12" style={{marginTop:"15px"}}>
                     <div className="tipo_user" style={{marginBottom:"10px"}}>
                         <button className={prop.agendaPage === 1?"btn btn-light form-control active":"btn btn-primary form-control"} type="button" onClick={()=>prop.setAgendaPage(1)}>POR PROF.</button>
                         <button className={prop.agendaPage === 2?"btn btn-light form-control active":"btn btn-primary form-control"}  type="button" onClick={()=>prop.setAgendaPage(2)}>POR SEM.</button>
