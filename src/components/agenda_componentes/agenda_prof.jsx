@@ -218,7 +218,7 @@ const AgendaProf = ()=>{
                                                                             </h6>
                                                                         )   
                                                                     })}
-                                                                     {horarioProf.some((value) => JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify({ horario: value.horario, dia: value.dia })) ? null : (
+                                                                    {horarioProf.some((value) => JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify({ horario: value.horario, dia: value.dia })) ? null : (
                                                                         <h6
                                                                             data-curso={indexCurso}
                                                                             data-prof={indexProfessor}
