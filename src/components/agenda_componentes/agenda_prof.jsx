@@ -175,50 +175,62 @@ const AgendaProf = ()=>{
                                     </thead>
                                     <tbody>
                                         {horarios.map((horario, indexHorario) => {
-                                            
-                                            
                                             return (
                                                 <tr key={indexHorario}>
                                                     <td>{horario}</td>
                                                     {dias.map((dia, indexDia) => {
-                                                        return indexCurso === cursoKey &&
-                                                            indexProfessor === profKey &&
-                                                            indexHorario === horarioKey &&
-                                                            indexDia === diaKey ? (
-                                                                <td key={indexDia}>
-                                                                    <div className="card">
-                                                                        <div className="card-body"> 
-                                                                            <form onSubmit={handleSubmit(onSubmit)}>
-                                                                                <center><label>PROFESSOR</label></center>
-                                                                                <div className="mb-3">
-                                                                                    <label className="form-label">SIAPE:</label>
-                                                                                    <input type="text" defaultValue="" {...register("email_prof",{ required: true})} className="form-control" placeholder="name@example.com"/>
-                                                                                    {errors?.email_prof?.type === "required" && <p className="text-danger">*campo obrigatório</p>}
+                                                        return(
+                                                            <td
+                                                                key={indexDia}
+                                                            >
+                                                                {horarioProf.map((value, indexHagenda) => { 
+                                                                    return JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify({horario:value.horario,dia:value.dia}) &&(
+                                                                        indexProfessor === profKey &&
+                                                                        indexHorario === horarioKey &&
+                                                                        indexDia === diaKey ? (
+                                                                            <h3 key={indexHagenda} onClick={editarHorario}>
+                                                                                <div className="card">
+                                                                                    <div className="card-body"> 
+                                                                                        <form onSubmit={handleSubmit(onSubmit)}>
+                                                                                            <center><label>PROFESSOR</label></center>
+                                                                                            <div className="mb-3">
+                                                                                                <label className="form-label">SIAPE:</label>
+                                                                                                <input type="text" defaultValue="" {...register("email_prof",{ required: true})} className="form-control" placeholder="name@example.com"/>
+                                                                                                {errors?.email_prof?.type === "required" && <p className="text-danger">*campo obrigatório</p>}
+                                                                                            </div>
+                                                                                            <div className="mb-3">
+                                                                                                <label className="form-label">SENHA:</label>
+                                                                                                <input type="password" defaultValue="" {...register("senha_prof",{ required: true})} className="form-control" placeholder="name@example.com"/>
+                                                                                                {errors?.senha_prof?.type === "required" && <p className="text-danger">*campo obrigatório</p>}
+                                                                                            </div> 
+                                                                                            <div className="d-grid gap-2">
+                                                                                                <input type="submit" className="btn btn-success" value="ENTRAR"/>
+                                                                                            </div> 
+                                                                                        </form>
+                                                                                    </div>
                                                                                 </div>
-                                                                                <div className="mb-3">
-                                                                                    <label className="form-label">SENHA:</label>
-                                                                                    <input type="password" defaultValue="" {...register("senha_prof",{ required: true})} className="form-control" placeholder="name@example.com"/>
-                                                                                    {errors?.senha_prof?.type === "required" && <p className="text-danger">*campo obrigatório</p>}
-                                                                                </div> 
-                                                                                <div className="d-grid gap-2">
-                                                                                    <input type="submit" className="btn btn-success" value="ENTRAR"/>
-                                                                                </div> 
-                                                                            </form>
-                                                                        </div>
-                                                                    </div>
-                                                                </td>
-                                                            ) : (
-                                                                <td
-                                                                    key={indexDia}
-                                                                >
-                                                                    {horarioProf.map((value, indexHagenda) => { 
-                                                                        return JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify({horario:value.horario,dia:value.dia}) &&(
-                                                                            <h6 key={indexHagenda}>
-                                                                                <CardComponent txt1={value.disciplina} txt2={course}/>
+                                                                            </h3>
+                                                                        ):(
+                                                                            <h6 key={indexHagenda} onClick={editarHorario}
+                                                                            >
+                                                                                <CardComponent 
+                                                                                    txt1={value.disciplina} 
+                                                                                    txt2={course}
+                                                                                    dataCurso={indexCurso}
+                                                                                    dataProf={indexProfessor}
+                                                                                    dataHorario={indexHorario}
+                                                                                    dataDia={indexDia}
+                                                                                />
                                                                             </h6>
-                                                                        )   
-                                                                    })}
-                                                                    {horarioProf.some((value) => JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify({ horario: value.horario, dia: value.dia })) ? null : (
+                                                                        )
+                                                                    )   
+                                                                })}
+                                                                {horarioProf.some((value) => JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify({ horario: value.horario, dia: value.dia })) ? null : (
+                                                                    indexProfessor === profKey &&
+                                                                    indexHorario === horarioKey &&
+                                                                    indexDia === diaKey ? (
+                                                                        <h3>cadastrar</h3>
+                                                                    ):(
                                                                         <h6
                                                                             data-curso={indexCurso}
                                                                             data-prof={indexProfessor}
@@ -228,9 +240,10 @@ const AgendaProf = ()=>{
                                                                             >
                                                                             +
                                                                         </h6>
-                                                                    )}
-                                                                </td>
-                                                            );
+                                                                    )
+                                                                )}
+                                                            </td>
+                                                        );
                                                     })} 
                                                 </tr>
                                             );
