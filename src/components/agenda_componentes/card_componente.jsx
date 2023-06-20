@@ -1,5 +1,5 @@
 import {React} from 'react';
-const CardComponent = (prop)=>{
+export const CardComponentProf = (prop)=>{
     return (
         <div className="card">
             <p 
@@ -15,4 +15,20 @@ const CardComponent = (prop)=>{
         </div>
     );
 }
-export default CardComponent;
+export const CardComponentLab = (prop)=>{
+    return (
+        <div className="card">
+            <p  
+                data-lab={prop.dataLab}
+                data-dia={prop.dataDia}
+                data-horario={prop.dataHorario} 
+            >
+                Editar
+            </p>
+            <div className="card-body">
+                <p>({prop.txt1})-({prop.txt2})</p>
+                <p>({prop.txt3})</p>
+            </div>
+        </div>
+    );
+}

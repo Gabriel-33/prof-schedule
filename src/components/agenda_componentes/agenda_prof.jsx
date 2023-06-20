@@ -1,7 +1,7 @@
 import React from "react";
 import { useState,useEffect } from "react";
 import { useForm } from "react-hook-form";
-import CardComponent from "./card_componente";
+import {CardComponentProf} from "./card_componente";
 
 const AgendaProf = ()=>{
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
@@ -213,7 +213,7 @@ const AgendaProf = ()=>{
                                                                         ):(
                                                                             <h6 key={indexHagenda} onClick={editarHorario}
                                                                             >
-                                                                                <CardComponent 
+                                                                                <CardComponentProf 
                                                                                     txt1={value.disciplina} 
                                                                                     txt2={course}
                                                                                     dataCurso={indexCurso}

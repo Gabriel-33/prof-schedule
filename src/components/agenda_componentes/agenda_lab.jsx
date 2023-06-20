@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import CardComponent from "./card_componente";
+import {CardComponentLab} from "./card_componente";
 const AgendaLab = () => {
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const [prof, SetProf] = useState(["Alexandre", "Eurinardo", "Bomfim", "Tati"]);
@@ -136,31 +136,61 @@ const AgendaLab = () => {
     return (
         <React.Fragment>
             <table className="table table-striped table-hover table-bordered border-primary">
-            {laboratorio.map((lab, indexLab) => {
-                const { laboratorio, horario, professor, disciplina } = lab;
-                return (
-                <React.Fragment key={indexLab}>
-                    <thead>
-                    <tr>
-                        <th>{lab.lab}<br></br>{lab.capacidade} alunos</th>
-                        <th>Segunda</th>
-                        <th>Terça</th>
-                        <th>Quarta</th>
-                        <th>Quinta</th>
-                        <th>Sexta</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {horarios.map((value, indexHorario) => {
-                        return (
-                        <React.Fragment key={indexHorario}>
-                            <tr>
-                            <td>{value}</td>
-                            {dias.map((dia, indexDia) => {
-                                return lab.horario.map((labH, indexLabh) => {
-                                return (
-                                    JSON.stringify({ horario: labH.horario, dia: labH.dia }) ===
-                                    JSON.stringify({ horario: indexHorario, dia: indexDia }) && (
+                {laboratorio.map((lab, indexLab) => {
+                    const { laboratorio, horario, professor, disciplina } = lab;
+                    return (
+                    <React.Fragment key={indexLab}>
+                        <thead>
+                        <tr>
+                            <th>{lab.lab}<br></br>{lab.capacidade} alunos</th>
+                            <th>Segunda</th>
+                            <th>Terça</th>
+                            <th>Quarta</th>
+                            <th>Quinta</th>
+                            <th>Sexta</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {horarios.map((value, indexHorario) => {
+                            return (
+                            <React.Fragment key={indexHorario}>
+                                <tr>
+                                <td>{value}</td>
+                                {dias.map((dia, indexDia) => {
+                                    return lab.horario.map((labH, indexLabh) => {
+                                        return (
+                                            JSON.stringify({ horario: labH.horario, dia: labH.dia }) ===
+                                            JSON.stringify({ horario: indexHorario, dia: indexDia }) && (
+                                            indexLab === labKey && indexDia === diaKey && indexHorario == horarioKey ? (
+                                                    <td
+                                                        key={indexDia}
+                                                        data-lab={indexLab}
+                                                        data-dia={indexDia}
+                                                        data-horario={indexHorario}
+                                                        onClick={adicionarAgendaLab}
+                                                    >
+                                                        editar
+                                                    </td>
+                                                ) : (
+                                                    <td key={indexDia} onClick={adicionarAgendaLab}>
+                                                        <CardComponentLab 
+                                                            key={indexDia}
+                                                            dataLab={indexLab}
+                                                            dataDia={indexDia}
+                                                            dataHorario={indexHorario} 
+                                                            txt1={labH.professor} 
+                                                            txt2={labH.disciplina} 
+                                                            txt3={labH.curso}
+                                                        />
+                                                    </td>
+                                                )
+                                            )
+                                        );
+                                    });
+            
+                                })}
+                                {dias.map((dia, indexDia) => {
+                                    return lab.horario.some((value) => JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify({ horario: value.horario, dia: value.dia })) ? null : (
                                     indexLab === labKey && indexDia === diaKey && indexHorario == horarioKey ? (
                                         <td
                                         key={indexDia}
@@ -169,7 +199,7 @@ const AgendaLab = () => {
                                         data-horario={indexHorario}
                                         onClick={adicionarAgendaLab}
                                         >
-                                        editar
+                                        cadastrar
                                         </td>
                                     ) : (
                                         <td
@@ -179,48 +209,20 @@ const AgendaLab = () => {
                                         data-horario={indexHorario}
                                         onClick={adicionarAgendaLab}
                                         >
-                                        aula
+                                        +
                                         </td>
                                     )
-                                    )
-                                );
-                                });
-        
-                            })}
-                            {dias.map((dia, indexDia) => {
-                                return lab.horario.some((value) => JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify({ horario: value.horario, dia: value.dia })) ? null : (
-                                indexLab === labKey && indexDia === diaKey && indexHorario == horarioKey ? (
-                                    <td
-                                    key={indexDia}
-                                    data-lab={indexLab}
-                                    data-dia={indexDia}
-                                    data-horario={indexHorario}
-                                    onClick={adicionarAgendaLab}
-                                    >
-                                    cadastrar
-                                    </td>
-                                ) : (
-                                    <td
-                                    key={indexDia}
-                                    data-lab={indexLab}
-                                    data-dia={indexDia}
-                                    data-horario={indexHorario}
-                                    onClick={adicionarAgendaLab}
-                                    >
-                                    +
-                                    </td>
-                                )
-                                );
-        
-                            })}
-                            </tr>
-                        </React.Fragment>
-                        );
-                    })}
-                    </tbody>
-                </React.Fragment>
-                );
-            })}
+                                    );
+            
+                                })}
+                                </tr>
+                            </React.Fragment>
+                            );
+                        })}
+                        </tbody>
+                    </React.Fragment>
+                    );
+                })}
             </table>
         </React.Fragment>
     );
