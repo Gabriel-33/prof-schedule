@@ -231,15 +231,21 @@ const AgendaProf = ()=>{
                                                                     indexDia === diaKey ? (
                                                                         <h3>cadastrar</h3>
                                                                     ):(
-                                                                        <h6
-                                                                            data-curso={indexCurso}
-                                                                            data-prof={indexProfessor}
-                                                                            data-horario={indexHorario}
-                                                                            data-dia={indexDia}
-                                                                            onClick={editarHorario}
-                                                                            >
-                                                                            +
-                                                                        </h6>
+                                                                        indexHorario != 2?(
+                                                                            <h6
+                                                                                data-curso={indexCurso}
+                                                                                data-prof={indexProfessor}
+                                                                                data-horario={indexHorario}
+                                                                                data-dia={indexDia}
+                                                                                onClick={editarHorario}
+                                                                                >
+                                                                                +
+                                                                            </h6>
+                                                                        ):(
+                                                                            <h6>
+                                                                                almoço
+                                                                            </h6>
+                                                                        )
                                                                     )
                                                                 )}
                                                             </td>
