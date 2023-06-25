@@ -5,9 +5,6 @@ import {CardComponentProf} from "./card_componente";
 
 const AgendaProf = ()=>{
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
-    const [prof,SetProf] = useState(["Alexandre","Eurinardo","Bomfim","Tati"]);
-
-    const [cadeira,SetCadeira] = useState(["Computação","Software","Civíl","Produção","Mecânica"]);
 
     const [cadeiraSelecionada,setCadeiraSelecionada] = useState(0);
 
@@ -28,7 +25,7 @@ const AgendaProf = ()=>{
     const [diaKey,setDiaKey] = useState(false);
 
     const onSubmit = (data) => {
-        navigate("/dashboard");  
+        
     };
 
     const agenda = [
@@ -188,23 +185,32 @@ const AgendaProf = ()=>{
                                                                         indexProfessor === profKey &&
                                                                         indexHorario === horarioKey &&
                                                                         indexDia === diaKey ? (
-                                                                            <h3 key={indexHagenda} onClick={editarHorario}>
-                                                                                <div className="card">
+                                                                            <h3 key={indexHagenda}>
+                                                                                <div className="" style={{backgroundColor:"white"}}>
                                                                                     <div className="card-body"> 
                                                                                         <form onSubmit={handleSubmit(onSubmit)}>
-                                                                                            <center><label>PROFESSOR</label></center>
-                                                                                            <div className="mb-3">
-                                                                                                <label className="form-label">SIAPE:</label>
-                                                                                                <input type="text" defaultValue="" {...register("email_prof",{ required: true})} className="form-control" placeholder="name@example.com"/>
-                                                                                                {errors?.email_prof?.type === "required" && <p className="text-danger">*campo obrigatório</p>}
+                                                                                            <center><label>Editar horário</label></center>
+                                                                                            <div className="input-group mb-3">
+                                                                                                <label className="input-group-text" htmlFor="inputGroupSelect01">Cadeira:</label>
+                                                                                                <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
+                                                                                                    <option value="0">lógica</option>
+                                                                                                    <option value="1">lfa</option>
+                                                                                                    <option value="2">Mat. comp.</option>
+                                                                                                    <option value="3">Poo</option>
+                                                                                                </select>
                                                                                             </div>
-                                                                                            <div className="mb-3">
-                                                                                                <label className="form-label">SENHA:</label>
-                                                                                                <input type="password" defaultValue="" {...register("senha_prof",{ required: true})} className="form-control" placeholder="name@example.com"/>
-                                                                                                {errors?.senha_prof?.type === "required" && <p className="text-danger">*campo obrigatório</p>}
-                                                                                            </div> 
+                                                                                            <div className="input-group mb-3">
+                                                                                                <label className="input-group-text" htmlFor="inputGroupSelect01">Curso:</label>
+                                                                                                <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
+                                                                                                    <option value="0">C.C</option>
+                                                                                                    <option value="1">Software</option>
+                                                                                                    <option value="2">Civl</option>
+                                                                                                    <option value="3">Produção</option>
+                                                                                                </select>
+                                                                                            </div>
                                                                                             <div className="d-grid gap-2">
-                                                                                                <input type="submit" className="btn btn-success" value="ENTRAR"/>
+                                                                                                <input type="submit" className="btn btn-success" value="SALVAR"/>
+                                                                                                <button className="btn btn-secondary" onClick={editarHorario}>CANCELAR</button>
                                                                                             </div> 
                                                                                         </form>
                                                                                     </div>
@@ -229,17 +235,53 @@ const AgendaProf = ()=>{
                                                                     indexProfessor === profKey &&
                                                                     indexHorario === horarioKey &&
                                                                     indexDia === diaKey ? (
-                                                                        <h3>cadastrar</h3>
+                                                                        <h3>
+                                                                            <div className="" style={{backgroundColor:"white"}}>
+                                                                                <div className="card-body"> 
+                                                                                    <form onSubmit={handleSubmit(onSubmit)}>
+                                                                                        <center><label>Cadastrar horário</label></center>
+                                                                                        <div className="input-group mb-3">
+                                                                                            <label className="input-group-text" htmlFor="inputGroupSelect01">Cadeira:</label>
+                                                                                            <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
+                                                                                                <option value="0">lógica</option>
+                                                                                                <option value="1">lfa</option>
+                                                                                                <option value="2">Mat. comp.</option>
+                                                                                                <option value="3">Poo</option>
+                                                                                            </select>
+                                                                                        </div>
+                                                                                        <div className="input-group mb-3">
+                                                                                            <label className="input-group-text" htmlFor="inputGroupSelect01">Curso:</label>
+                                                                                            <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
+                                                                                                <option value="0">C.C</option>
+                                                                                                <option value="1">Software</option>
+                                                                                                <option value="2">Civl</option>
+                                                                                                <option value="3">Produção</option>
+                                                                                            </select>
+                                                                                        </div>
+                                                                                        <div className="d-grid gap-2">
+                                                                                            <input type="submit" className="btn btn-success" value="SALVAR"/>
+                                                                                            <button className="btn btn-secondary" onClick={editarHorario}>CANCELAR</button>
+                                                                                        </div> 
+                                                                                    </form>
+                                                                                </div>
+                                                                            </div>
+                                                                        </h3>
                                                                     ):(
-                                                                        <h6
-                                                                            data-curso={indexCurso}
-                                                                            data-prof={indexProfessor}
-                                                                            data-horario={indexHorario}
-                                                                            data-dia={indexDia}
-                                                                            onClick={editarHorario}
-                                                                            >
-                                                                            +
-                                                                        </h6>
+                                                                        indexHorario != 2?(
+                                                                            <h6
+                                                                                data-curso={indexCurso}
+                                                                                data-prof={indexProfessor}
+                                                                                data-horario={indexHorario}
+                                                                                data-dia={indexDia}
+                                                                                onClick={editarHorario}
+                                                                                >
+                                                                                +
+                                                                            </h6>
+                                                                        ):(
+                                                                            <h6>
+                                                                                almoço
+                                                                            </h6>
+                                                                        )
                                                                     )
                                                                 )}
                                                             </td>

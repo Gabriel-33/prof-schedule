@@ -2,14 +2,14 @@ import { useForm } from "react-hook-form";
 const Professor = ()=>{
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const onSubmit = (data) => {
-        
+        alert("Form válido!");
     };
     return(
         <form onSubmit={handleSubmit(onSubmit)}>
             <center><label>PROFESSOR</label></center>
             <div className="mb-3">
                 <label className="form-label">*NOME:</label>
-                <input type="text" defaultValue="" {...register("nome_professor",{required:true,maxLength:60})} className="form-control" placeholder="name@example.com"/>
+                <input type="text" defaultValue="" {...register("nome_professor",{required:true,maxLength:60})} className="form-control" placeholder="Professor"/>
                 {errors?.nome_professor?.type === "required" && <p className="text-danger">*campo obrigatório</p>}
                 {errors?.nome_professor?.type === "maxLength" && <p className="text-danger">*Insira até 60 caracteres</p>}
             </div>

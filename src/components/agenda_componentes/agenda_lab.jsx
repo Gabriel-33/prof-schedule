@@ -26,7 +26,7 @@ const AgendaLab = () => {
 
 
     const onSubmit = (data) => {
-        navigate("/dashboard");
+        /* navigate("/dashboard"); */
     };
 
     const laboratorio = [
@@ -43,8 +43,8 @@ const AgendaLab = () => {
                     "professor": "alexandre"
                 },
                 {
-                    "horario": 2,
-                    "dia": 0,
+                    "horario": 1,
+                    "dia": 3,
                     "disciplina": "lógica",
                     "curso": "cc",
                     "professor": "alexandre"
@@ -85,7 +85,7 @@ const AgendaLab = () => {
                     "professor": "alexandre"
                 },
                 {
-                    "horario": 2,
+                    "horario": 0,
                     "dia": 0,
                     "disciplina": "lógica",
                     "curso": "cc",
@@ -141,14 +141,14 @@ const AgendaLab = () => {
                     return (
                     <React.Fragment key={indexLab}>
                         <thead>
-                        <tr>
-                            <th>{lab.lab}<br></br>{lab.capacidade} alunos</th>
-                            <th>Segunda</th>
-                            <th>Terça</th>
-                            <th>Quarta</th>
-                            <th>Quinta</th>
-                            <th>Sexta</th>
-                        </tr>
+                            <tr>
+                                <th>{lab.lab}<br></br>{lab.capacidade} alunos</th>
+                                <th>Segunda</th>
+                                <th>Terça</th>
+                                <th>Quarta</th>
+                                <th>Quinta</th>
+                                <th>Sexta</th>
+                            </tr>
                         </thead>
                         <tbody>
                         {horarios.map((value, indexHorario) => {
@@ -167,9 +167,45 @@ const AgendaLab = () => {
                                                         data-lab={indexLab}
                                                         data-dia={indexDia}
                                                         data-horario={indexHorario}
-                                                        onClick={adicionarAgendaLab}
                                                     >
-                                                        editar
+                                                        <div style={{backgroundColor:"white"}}>
+                                                            <div className="card-body"> 
+                                                                <form onSubmit={handleSubmit(onSubmit)}>
+                                                                    <center><label>Editar horário</label></center>
+                                                                    <div className="input-group mb-3">
+                                                                        <label className="input-group-text" htmlFor="inputGroupSelect01">Cadeira:</label>
+                                                                        <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
+                                                                            <option value="0">lógica</option>
+                                                                            <option value="1">lfa</option>
+                                                                            <option value="2">Mat. comp.</option>
+                                                                            <option value="3">Poo</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div className="input-group mb-3">
+                                                                        <label className="input-group-text" htmlFor="inputGroupSelect01">Professor:</label>
+                                                                        <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
+                                                                            <option value="0">Alexandre</option>
+                                                                            <option value="1">Bomfim</option>
+                                                                            <option value="2">Tati</option>
+                                                                            <option value="3">Eurinardo</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div className="input-group mb-3">
+                                                                        <label className="input-group-text" htmlFor="inputGroupSelect01">Curso:</label>
+                                                                        <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
+                                                                            <option value="0">C.C</option>
+                                                                            <option value="1">Software</option>
+                                                                            <option value="2">Civil</option>
+                                                                            <option value="3">Produção</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div className="d-grid gap-2">
+                                                                        <input type="submit" className="btn btn-success" value="SALVAR"/>
+                                                                        <button className="btn btn-secondary" onClick={adicionarAgendaLab}>CANCELAR</button>
+                                                                    </div> 
+                                                                </form>
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                 ) : (
                                                     <td key={indexDia} onClick={adicionarAgendaLab}>
@@ -193,24 +229,66 @@ const AgendaLab = () => {
                                     return lab.horario.some((value) => JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify({ horario: value.horario, dia: value.dia })) ? null : (
                                     indexLab === labKey && indexDia === diaKey && indexHorario == horarioKey ? (
                                         <td
-                                        key={indexDia}
-                                        data-lab={indexLab}
-                                        data-dia={indexDia}
-                                        data-horario={indexHorario}
-                                        onClick={adicionarAgendaLab}
+                                            key={indexDia}
+                                            data-lab={indexLab}
+                                            data-dia={indexDia}
+                                            data-horario={indexHorario}
                                         >
-                                        cadastrar
+                                        <div style={{backgroundColor:"white"}}>
+                                            <div className="card-body"> 
+                                                <form onSubmit={handleSubmit(onSubmit)}>
+                                                    <center><label>Novo horário</label></center>
+                                                    <div className="input-group mb-3">
+                                                        <label className="input-group-text" htmlFor="inputGroupSelect01">Cadeira:</label>
+                                                        <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
+                                                            <option value="0">lógica</option>
+                                                            <option value="1">lfa</option>
+                                                            <option value="2">Mat. comp.</option>
+                                                            <option value="3">Poo</option>
+                                                        </select>
+                                                    </div>
+                                                    <div className="input-group mb-3">
+                                                        <label className="input-group-text" htmlFor="inputGroupSelect01">Professor:</label>
+                                                        <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
+                                                            <option value="0">Alexandre</option>
+                                                            <option value="1">Bomfim</option>
+                                                            <option value="2">Tati</option>
+                                                            <option value="3">Eurinardo</option>
+                                                        </select>
+                                                    </div>
+                                                    <div className="input-group mb-3">
+                                                        <label className="input-group-text" htmlFor="inputGroupSelect01">Curso:</label>
+                                                        <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
+                                                            <option value="0">C.C</option>
+                                                            <option value="1">Software</option>
+                                                            <option value="2">Civil</option>
+                                                            <option value="3">Produção</option>
+                                                        </select>
+                                                    </div>
+                                                    <div className="d-grid gap-2">
+                                                        <input type="submit" className="btn btn-success" value="SALVAR"/>
+                                                        <button className="btn btn-secondary" onClick={adicionarAgendaLab}>CANCELAR</button>
+                                                    </div> 
+                                                </form>
+                                            </div>
+                                        </div>
                                         </td>
                                     ) : (
-                                        <td
-                                        key={indexDia}
-                                        data-lab={indexLab}
-                                        data-dia={indexDia}
-                                        data-horario={indexHorario}
-                                        onClick={adicionarAgendaLab}
-                                        >
-                                        +
-                                        </td>
+                                        indexHorario !=2?(
+                                            <td
+                                                key={indexDia}
+                                                data-lab={indexLab}
+                                                data-dia={indexDia}
+                                                data-horario={indexHorario}
+                                                onClick={adicionarAgendaLab}
+                                            >
+                                            +
+                                            </td>
+                                        ):(
+                                            <td key={indexDia}>
+                                                Almoço
+                                            </td>
+                                        )
                                     )
                                     );
             
