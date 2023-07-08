@@ -14,8 +14,8 @@ const Agenda = (prop)=>{
                     <div className="agente_form">
                         <div className="card cadastro_forms">
                             <div className="card-body">
-                                {prop.agendaPage === 1 && <AgendaProf/>}
-                                {prop.agendaPage === 2 && <AgendaSemestre/>}
+                                {prop.agendaPage === 1 && <AgendaProf agenda={prop.agendaProf} setAgenda={prop.setAgendaProf}/>}
+                                {prop.agendaPage === 2 && <AgendaSemestre agenda={prop.agendaSem} setAgenda={prop.setAgendaSem}/>}
                                 {prop.agendaPage === 3 && <AgendaLab/>}
                             </div>
                         </div>

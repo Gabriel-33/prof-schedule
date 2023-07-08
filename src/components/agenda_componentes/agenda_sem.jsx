@@ -2,11 +2,10 @@ import React from "react";
 import { useState,useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {CardComponentSem} from "./card_componente";
-const AgendaSemestre = ()=>{
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
-
-    const [cadeiraSelecionada,setCadeiraSelecionada] = useState(0);
-
+import axios from 'axios';
+const AgendaSemestre = (prop)=>{
+    const { register,reset, handleSubmit, watch, formState: { errors } } = useForm();
+    const [professor,setProfessor] = useState([]);
     const [horarios,SetHorarios] = 
 
     useState(["8-10h","10-12h","12-13:30h","13:30 - 15:30","15:30 - 17:30"]);
@@ -23,51 +22,30 @@ const AgendaSemestre = ()=>{
     
     const [diaKey,setDiaKey] = useState(false);
 
-    const onSubmit = (data) => {
-        /* navigate("/dashboard");  */ 
-    };
-
-    const agenda = [
-        {
-            id_curso: 1,
-            curso: 'computação',
-            cadeira: [
-            {
-                id_cadeira: 1,
-                semestre:'1',
-                fk_curso:1,
-                horario: [
-                    { horario: 3, dia: 0 ,disciplina:'lógica',professor:'alexandre'},
-                    { horario: 0, dia: 0 ,disciplina:'poo',professor:'alexandre'},
-                    { horario: 1, dia: 1 ,disciplina:'web',professor:'alexandre'},
-                    { horario: 3, dia: 2 ,disciplina:'lógica',professor:'alexandre'},
-                    { horario: 0, dia: 2 ,disciplina:'poo',professor:'alexandre'},
-                    { horario: 1, dia: 4 ,disciplina:'web',professor:'alexandre'},
-                ],
-            }],
-        },
-        {
-            id_curso: 2,
-            curso: 'software',
-            cadeira: [
-            {
-                id_cadeira: 2,
-                semestre:'2',
-                fk_curso:2,
-                horario: [
-                    { horario: 3, dia: 0 ,disciplina:'lógica',professor:'alexandre'},
-                    { horario: 0, dia: 0 ,disciplina:'poo',professor:'alexandre'},
-                    { horario: 1, dia: 1 ,disciplina:'web',professor:'alexandre'},
-                    { horario: 3, dia: 2 ,disciplina:'lógica',professor:'alexandre'},
-                    { horario: 0, dia: 2 ,disciplina:'poo',professor:'alexandre'},
-                    { horario: 1, dia: 4 ,disciplina:'web',professor:'alexandre'},
-                ],
-            }
-            ],
-        },
-    ]
+    const onCadastrarAgenda = async(data) => {
+        console.log(data);
+        reset();
+        prop.agenda[data.indice_curso].semestre[data.indice_cadeira].horario.push({
+            "horario": data.horario,
+            "dia": data.dia,
+            "disciplina": data.disciplina,            
+            "professor": data.nome_professor
+        });
+        let novo_horario_semestre = prop.agenda[data.indice_curso].semestre[data.indice_cadeira];
+        try {
+            const response = await axios.put('http://localhost:8080/editar_curso_horario', { data: novo_horario_semestre,id_semestre:data.id_semestre });
+            //console.log(response.data);
+            //edite o curso
+        } catch (error) {
+            console.error(error);
+        };
+        setCursoKey(false);
+        setCadeiraKey(false);
+        setHorarioKey(false);
+        setDiaKey(false);
+    }
     const editarHorario = (prop)=>{
-
+        reset();
         const KeyCurso = prop.target.getAttribute("data-curso");
 
         const keyCadeira= prop.target.getAttribute("data-cadeira");
@@ -81,15 +59,45 @@ const AgendaSemestre = ()=>{
         setHorarioKey(parseInt(KeyHorario));
         setDiaKey(parseInt(KeyDia));
     }
+    const onExcluirHorario = async(data)=>{
+        reset();
+        const KeyCurso = data.target.getAttribute("data-curso");
+        const keyCadeira= data.target.getAttribute("data-cadeira");
+        const KeyHorario = data.target.getAttribute("data-horario");
+        const KeyDia = data.target.getAttribute("data-dia");
+        const buscar_horario_semestre = prop.agenda[KeyCurso].semestre[keyCadeira];
+        const index = buscar_horario_semestre.horario.findIndex((value) => 
+        value.dia == KeyDia && value.horario == KeyHorario);
+        let id_semestre = buscar_horario_semestre.id_curso;
+        let novo_horario = buscar_horario_semestre.horario.splice(index,1)
+        if(index!=-1){
+            try {
+                const response = await axios.put('http://localhost:8080/editar_curso_horario', { data: buscar_horario_semestre,id_semestre:id_semestre });
+            } catch (error) {
+                console.error(error);
+            };
+        } 
+        setCursoKey(false);
+        setCadeiraKey(false);
+        setHorarioKey(false);
+        setDiaKey(false);
+
+    }
     useEffect(() => {
-        
-          
-    }, [cursoKey,horarioKey,diaKey]);
+        axios.get('http://localhost:8080/listar_professores')
+        .then(response => {
+            setProfessor(response.data);
+            console.log(professor);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    }, []);
     return(
         <React.Fragment>
             <table className="table table-striped table-hover table-bordered border-primary">
-                {agenda.map((curso, indexCurso) => {
-                    const { curso: course, cadeira:cadeiraValue } = curso;
+                {prop.agenda.map((curso, indexCurso) => {
+                    const { _id: nome_curso, semestre:semestre } = curso;
 
                     return (
                     <React.Fragment key={indexCurso}>
@@ -97,18 +105,19 @@ const AgendaSemestre = ()=>{
                             <tr>
                                 <th colSpan={6}>
                                 <center>
-                                    <h2>{course}</h2>
+                                    <h2>{nome_curso}</h2>
                                 </center>
                                 </th>
                             </tr>
                         </thead>
-                        {cadeiraValue.map((itemCadeira, indexCadeira) => {
+                        {semestre.map((itemCadeira, indexCadeira) => {
+                            
                             const {cadeira:cadeiraItem,horario: horarioValue } = itemCadeira;
                             return (
                                 <React.Fragment key={indexCadeira}>
                                     <thead>
                                         <tr>
-                                            <th>{course}-{itemCadeira.semestre}</th>
+                                            <th>{nome_curso}-{itemCadeira.numero_semestre}</th>
                                             <th>Segunda</th>
                                             <th>Terça</th>
                                             <th>Quarta</th>
@@ -117,7 +126,7 @@ const AgendaSemestre = ()=>{
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {horarios.map((horario, indexHorario) => {
+                                    {horarios.map((horario, indexHorario) => {
                                             return (
                                                 <tr key={indexHorario}>
                                                     <td>{horario}</td>
@@ -134,36 +143,12 @@ const AgendaSemestre = ()=>{
                                                                             <h3 key={indexHagenda}>
                                                                                 <div style={{backgroundColor:"white"}}>
                                                                                     <div className="card-body"> 
-                                                                                        <form onSubmit={handleSubmit(onSubmit)}>
-                                                                                            <center><label>Novo horário</label></center>
-                                                                                            <div className="input-group mb-3">
-                                                                                                <label className="input-group-text" htmlFor="inputGroupSelect01">Cadeira:</label>
-                                                                                                <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
-                                                                                                    <option value="0">lógica</option>
-                                                                                                    <option value="1">lfa</option>
-                                                                                                    <option value="2">Mat. comp.</option>
-                                                                                                    <option value="3">Poo</option>
-                                                                                                </select>
-                                                                                            </div>
-                                                                                            <div className="input-group mb-3">
-                                                                                                <label className="input-group-text" htmlFor="inputGroupSelect01">Professor:</label>
-                                                                                                <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
-                                                                                                    <option value="0">Alexandre</option>
-                                                                                                    <option value="1">Bomfim</option>
-                                                                                                    <option value="2">Tati</option>
-                                                                                                    <option value="3">Eurinardo</option>
-                                                                                                </select>
-                                                                                            </div>
-                                                                                            <div className="d-grid gap-2">
-                                                                                                <input type="submit" className="btn btn-success" value="SALVAR"/>
-                                                                                                <button className="btn btn-secondary" onClick={editarHorario}>CANCELAR</button>
-                                                                                            </div> 
-                                                                                        </form>
+                                                                                        editar
                                                                                     </div>
                                                                                 </div>
                                                                             </h3>
                                                                         ):(
-                                                                            <h6 key={indexHagenda} onClick={editarHorario}
+                                                                            <h6 key={indexHagenda}
                                                                             >
                                                                                 <CardComponentSem 
                                                                                     txt1={value.disciplina} 
@@ -172,36 +157,47 @@ const AgendaSemestre = ()=>{
                                                                                     dataCadeira={indexCadeira}
                                                                                     dataHorario={indexHorario}
                                                                                     dataDia={indexDia}
+                                                                                    onExcluirHorario={onExcluirHorario}
                                                                                 />
                                                                             </h6>
                                                                         )
                                                                     )   
                                                                 })}
                                                                 {horarioValue.some((value) => JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify({ horario: value.horario, dia: value.dia })) ? null : (
+                                                                    indexCurso === cursoKey &&
                                                                     indexCadeira === cadeiraKey &&
                                                                     indexHorario === horarioKey &&
                                                                     indexDia === diaKey ? (
+                                                                        
                                                                         <h3>
                                                                             <div style={{backgroundColor:"white"}}>
                                                                                 <div className="card-body"> 
-                                                                                    <form onSubmit={handleSubmit(onSubmit)}>
+                                                                                    <form onSubmit={handleSubmit(onCadastrarAgenda)}>
                                                                                         <center><label>Novo horário</label></center>
-                                                                                        <div className="input-group mb-3">
-                                                                                            <label className="input-group-text" htmlFor="inputGroupSelect01">Cadeira:</label>
-                                                                                            <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
-                                                                                                <option value="0">lógica</option>
-                                                                                                <option value="1">lfa</option>
-                                                                                                <option value="2">Mat. comp.</option>
-                                                                                                <option value="3">Poo</option>
-                                                                                            </select>
+                                                                                        <div className="mb-3">
+                                                                                            <label className="form-label">*Disciplina:</label>
+                                                                                            <input type="text" defaultValue="" {...register("disciplina",{required:true,maxLength:60})} className="form-control" placeholder="Disciplina"/>
+                                                                                            {errors?.disciplina?.type === "required" && <p className="text-danger">*campo obrigatório</p>}
+                                                                                            {errors?.disciplina?.type === "maxLength" && <p className="text-danger">*Insira até 60 caracteres</p>}
                                                                                         </div>
+                                                                                        <input type="hidden" {...register("id_semestre",{value:itemCadeira.id_curso})} className="form-control"/>
+                                                                                        <input type="hidden" {...register("indice_curso",{value:cursoKey})} className="form-control"/>
+                                                                                        <input type="hidden" {...register("indice_cadeira",{value:cadeiraKey})} className="form-control" />
+                                                                                        <input type="hidden" {...register("dia",{value:diaKey})} className="form-control" />
+                                                                                        <input type="hidden"  {...register("horario",{value:horarioKey})} className="form-control"/>
                                                                                         <div className="input-group mb-3">
                                                                                             <label className="input-group-text" htmlFor="inputGroupSelect01">Professor:</label>
-                                                                                            <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
-                                                                                                <option value="0">Alexandre</option>
-                                                                                                <option value="1">Bomfim</option>
-                                                                                                <option value="2">Tati</option>
-                                                                                                <option value="3">Eurinardo</option>
+                                                                                            <select className="form-select" id="inputGroupSelect01" {...register("nome_professor",{required:true,maxLength:60})}>
+                                                                                                {
+                                                                                                    professor[indexCurso]!=undefined?
+                                                                                                     professor[indexCurso].professor.map((professor_nome,indexProfessor)=>{
+                                                                                                        return(
+                                                                                                            <option key={indexProfessor}>{professor_nome.professor_nome}</option>
+                                                                                                        );
+                                                                                                    })
+                                                                                                    : <option key={-1}>Sem professor</option>
+                                                                                                }
+                                                                                            
                                                                                             </select>
                                                                                         </div>
                                                                                         <div className="d-grid gap-2">

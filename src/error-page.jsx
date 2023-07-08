@@ -7,7 +7,7 @@ const ErrorPage = () =>{
   return (
     <div id="error-page">
       <h1>Oopss!</h1>
-      <p>Sorry, an usnexpected error has occurred.</p>
+      <p>Página não encontrada!</p>
       <p>
         <i>{error.statusText || error.message}</i>
       </p>

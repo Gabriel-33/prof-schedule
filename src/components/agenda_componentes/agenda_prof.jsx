@@ -1,13 +1,14 @@
-import React from "react";
+import React from 'react';
 import { useState,useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {CardComponentProf} from "./card_componente";
+import axios from 'axios';
 
-const AgendaProf = ()=>{
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
+const AgendaProf = (props) => {
+    const { register,reset, handleSubmit, watch, formState: { errors } } = useForm();
 
     const [cadeiraSelecionada,setCadeiraSelecionada] = useState(0);
-
+    const[cursos,setCursos] = useState([]);
     const [horarios,SetHorarios] = 
 
     useState(["8-10h","10-12h","12-13:30h","13:30 - 15:30","15:30 - 17:30"]);
@@ -23,75 +24,80 @@ const AgendaProf = ()=>{
     const [horarioKey,setHorarioKey] = useState(false);
     
     const [diaKey,setDiaKey] = useState(false);
-
-    const onSubmit = (data) => {
-        
+    const [novo_horario_professor,setNovoHorarioProfessor] = useState({});
+    const onCadastrarHorario = async(data) => {
+        reset();
+        props.agenda[data.area].professor[data.indice_professor].horario_professor.push({
+            "horario": data.horario,
+            "dia": data.dia,
+            "disciplina": data.cadeira,
+            "_id": data.id_professor
+        });
+        const novo_horario_professor = props.agenda[data.area].professor[data.indice_professor].horario_professor;
+        setNovoHorarioProfessor(novo_horario_professor);
+        setCursoKey(false);
+        setProfKey(false);
+        setHorarioKey(false);
+        setDiaKey(false);
+        try {
+            const response = await axios.put('http://localhost:8080/editar_professor_horario', { data: novo_horario_professor,id_professor:data.id_professor });
+            //console.log(response.data);
+        } catch (error) {
+            console.error(error);
+        };
     };
-
-    const agenda = [
-    {
-        id_curso: 1,
-        curso: 'computação',
-        prof: [
-        {
-            id_prof: 1,
-            prof:'Alexandre',
-            fk_curso:1,
-            horario: [
-            { horario: 3, dia: 0 ,disciplina:'lógica'},
-            { horario: 0, dia: 0 ,disciplina:'poo'},
-            { horario: 1, dia: 1 ,disciplina:'web'},
-            { horario: 3, dia: 2 ,disciplina:'lógica'},
-            { horario: 0, dia: 2 ,disciplina:'poo'},
-            { horario: 1, dia: 4 ,disciplina:'web'},
-            ],
-        },
-        {
-            id_prof: 2,
-            prof:'Tati',
-            fk_curso:1,
-            horario: [
-                { horario: 3, dia: 0 ,disciplina:'ed'},
-                { horario: 0, dia: 0 ,disciplina:'mat.comp'},
-                { horario: 3, dia: 2 ,disciplina:'ed'},
-                { horario: 0, dia: 2 ,disciplina:'mat.comp'},
-            ],
-        },
-        ],
-    },
-    {
-        id_curso: 2,
-        curso: 'software',
-        prof: [
-        {
-            id_prof: 1,
-            prof:'Bomfim',
-            fk_curso:2,
-            horario: [
-                { horario: 3, dia: 0 ,disciplina:'i.a'},
-                { horario: 0, dia: 0 ,disciplina:'eda'},
-                { horario: 3, dia: 2 ,disciplina:'i.a'},
-                { horario: 0, dia: 2 ,disciplina:'eda'},
-            ],
-        },
-        {
-            id_prof: 2, 
-            prof:'eurinardo',
-            fk_curso:2,
-            horario: [
-                { horario: 3, dia: 0 ,disciplina:'lfa'},
-                { horario: 0, dia: 0 ,disciplina:'paa'},
-                { horario: 3, dia: 2 ,disciplina:'lfa'},
-                { horario: 0, dia: 2 ,disciplina:'paa'},
-                { horario: 0, dia: 1 ,disciplina:'int.eng.software'},
-                { horario: 0, dia: 3 ,disciplina:'int.eng.software'},
-            ],
-        },
-        ],
+    const onEditarHorario = async(data) => {
+        
+        const novo_horario_professor = props.agenda[data.area].professor[data.indice_professor].horario_professor;
+        
+        const horario_atualizado = {
+            "horario": data.horario,
+            "dia": data.dia,
+            "disciplina": data.cadeira,            
+            "_id": data.id_horario
+        };
+        
+        const index = novo_horario_professor.findIndex((value) => 
+        horario_atualizado._id === value._id && horario_atualizado.dia === value.dia && 
+        horario_atualizado.horario === value.horario);
+        if (index !== -1) {
+            novo_horario_professor.splice(index, 1,horario_atualizado);
+            try {
+                const response = await axios.put('http://localhost:8080/editar_professor_horario', { data: novo_horario_professor,id_professor:data.id_professor });
+                //console.log(response.data);
+            } catch (error) {
+                console.error(error);
+            };
+        }
+        reset();
+        setCursoKey(false);
+        setProfKey(false);
+        setHorarioKey(false);
+        setDiaKey(false);
     }
-    ];      
+    const onExcluirHorario = async(data) => {
+        const indice_professor = data.target.getAttribute("data-indice-professor");
+        const curso = data.target.getAttribute("data-curso");
+        const id_horario = data.target.getAttribute("data-id-horario");
+        const horario = data.target.getAttribute("data-horario");
+        const dia = data.target.getAttribute("data-dia");
+        const buscar_horario_professor = props.agenda[curso].professor[indice_professor];
+        const index = buscar_horario_professor.horario_professor.findIndex((value) => 
+        id_horario == value._id && dia == value.dia && 
+        horario == value.horario);
+        if(index!=-1){
+            buscar_horario_professor.horario_professor.splice(index,1);
+            //console.log(buscar_horario_professor.horario_professor);
+            try {
+                const response = await axios.put('http://localhost:8080/editar_professor_horario', { data: buscar_horario_professor.horario_professor,id_professor:buscar_horario_professor.id_professor });
+                //console.log(buscar_horario_professor.horario);
+            } catch (error) {
+                console.error(error);
+            };
+        }
+    }
     const editarHorario = (prop)=>{
-
+        reset();
         const KeyCurso = prop.target.getAttribute("data-curso");
 
         const KeyProf = prop.target.getAttribute("data-prof");
@@ -106,63 +112,40 @@ const AgendaProf = ()=>{
         setDiaKey(parseInt(KeyDia));
     }
     useEffect(() => {
-        agenda.forEach((curso) => {
-            const { curso: course, prof } = curso;
-            
-            /* console.log(`Course: ${course}`); */
-
-            prof.forEach((professor) => {
-                const { prof: professorName, horario } = professor;
-                
-                /* console.log(`- Professor: ${professorName}`);
-                console.log('- Schedule:'); */
-                
-                horario.forEach((schedule) => {
-                  const { horario: time, dia: day } = schedule;
-                  
-                  /* console.log({time,day}); */
-                });
-            });
-
-            /* console.log('---'); */
-          });
-          
-    }, [profKey,horarioKey,diaKey]);
+        axios.get('http://localhost:8080/listar_cursos')
+        .then(response => {
+            setCursos(prevCursos => [...prevCursos, ...response.data.map(curso => curso._id)]);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    },[]) 
     return(
         <React.Fragment>
-            {/* <div className="input-group mb-3">
-                <label className="input-group-text" htmlFor="inputGroupSelect01">Área:</label>
-                <select className="form-select" defaultValue={0} id="inputGroupSelect01">
-                    <option value="0">Computação</option>
-                    <option value="1">Software</option>
-                    <option value="2">Civíl</option>
-                    <option value="3">Produção</option>
-                    <option value="4">Mecânica</option>
-                    <option value="5">Todos</option>
-                </select>
-            </div> */}
             <table className="table table-striped table-hover table-bordered border-primary">
-                {agenda.map((curso, indexCurso) => {
-                    const { curso: course, prof } = curso;
-
+                {props.agenda.map((value, indexCurso) => {
+                    const { _id: nome_curso, professor } = value;
                     return (
                     <React.Fragment key={indexCurso}>
                         <thead>
                             <tr>
                                 <th colSpan={6}>
                                 <center>
-                                    <h2>Professores de {course}</h2>
+                                    <h2>Professores de {cursos[nome_curso]}</h2>
                                 </center>
                                 </th>
                             </tr>
                         </thead>
-                        {prof.map((professor, indexProfessor) => {
-                            const { prof: professorName, horario: horarioProf } = professor;
+                        {professor.map((professor, indexProfessor) => {
+                            const { professor_nome: professor_nome, horario_professor: horarioProf } = professor;
+
+                            const dataArray = JSON.stringify(horarioProf[0]);
+
                             return (
                                 <React.Fragment key={indexProfessor}>
                                     <thead>
                                         <tr>
-                                            <th>{professorName}</th>
+                                            <th>{professor_nome}</th>
                                             <th>Segunda</th>
                                             <th>Terça</th>
                                             <th>Quarta</th>
@@ -181,33 +164,29 @@ const AgendaProf = ()=>{
                                                                 key={indexDia}
                                                             >
                                                                 {horarioProf.map((value, indexHagenda) => { 
+                                                                    
                                                                     return JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify({horario:value.horario,dia:value.dia}) &&(
+                                                                        indexCurso === cursoKey &&
                                                                         indexProfessor === profKey &&
                                                                         indexHorario === horarioKey &&
                                                                         indexDia === diaKey ? (
                                                                             <h3 key={indexHagenda}>
                                                                                 <div className="" style={{backgroundColor:"white"}}>
                                                                                     <div className="card-body"> 
-                                                                                        <form onSubmit={handleSubmit(onSubmit)}>
+                                                                                        <form onSubmit={handleSubmit(onEditarHorario)}>
                                                                                             <center><label>Editar horário</label></center>
-                                                                                            <div className="input-group mb-3">
-                                                                                                <label className="input-group-text" htmlFor="inputGroupSelect01">Cadeira:</label>
-                                                                                                <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
-                                                                                                    <option value="0">lógica</option>
-                                                                                                    <option value="1">lfa</option>
-                                                                                                    <option value="2">Mat. comp.</option>
-                                                                                                    <option value="3">Poo</option>
-                                                                                                </select>
-                                                                                            </div>
-                                                                                            <div className="input-group mb-3">
-                                                                                                <label className="input-group-text" htmlFor="inputGroupSelect01">Curso:</label>
-                                                                                                <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
-                                                                                                    <option value="0">C.C</option>
-                                                                                                    <option value="1">Software</option>
-                                                                                                    <option value="2">Civl</option>
-                                                                                                    <option value="3">Produção</option>
-                                                                                                </select>
-                                                                                            </div>
+                                                                                            <div className="mb-3">
+                                                                                            <label className="form-label">*Disciplina:</label>
+                                                                                            <input type="text" defaultValue="" {...register("cadeira",{required:true,maxLength:60,value:value.disciplina})} className="form-control" placeholder="Disciplina"/>
+                                                                                            {errors?.disciplina?.type === "required" && <p className="text-danger">*campo obrigatório</p>}
+                                                                                            {errors?.disciplina?.type === "maxLength" && <p className="text-danger">*Insira até 60 caracteres</p>}
+                                                                                        </div>
+                                                                                        <input type="hidden" {...register("id_professor",{required:true,maxLength:60,value:professor.id_professor})} className="form-control"/>
+                                                                                        <input type="hidden" {...register("id_horario",{required:true,maxLength:60,value:value._id})} className="form-control"/>
+                                                                                        <input type="hidden" {...register("indice_professor",{value:profKey})} className="form-control"/>
+                                                                                        <input type="hidden" {...register("area",{value:indexCurso})} className="form-control"/>
+                                                                                        <input type="hidden" {...register("dia",{value:indexDia})} className="form-control"/>
+                                                                                        <input type="hidden" {...register("horario",{value:indexHorario})} className="form-control"/>
                                                                                             <div className="d-grid gap-2">
                                                                                                 <input type="submit" className="btn btn-success" value="SALVAR"/>
                                                                                                 <button className="btn btn-secondary" onClick={editarHorario}>CANCELAR</button>
@@ -221,43 +200,42 @@ const AgendaProf = ()=>{
                                                                             >
                                                                                 <CardComponentProf 
                                                                                     txt1={value.disciplina} 
-                                                                                    txt2={course}
+                                                                                    txt2={cursos[nome_curso]}
+                                                                                    dataIdHorario={value._id}
                                                                                     dataCurso={indexCurso}
                                                                                     dataProf={indexProfessor}
                                                                                     dataHorario={indexHorario}
                                                                                     dataDia={indexDia}
+                                                                                    dataindice_professor={profKey}
+                                                                                    dataArea={indexCurso}
+                                                                                    onExcluirHorario={onExcluirHorario}
                                                                                 />
                                                                             </h6>
                                                                         )
                                                                     )   
                                                                 })}
                                                                 {horarioProf.some((value) => JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify({ horario: value.horario, dia: value.dia })) ? null : (
+
+                                                                    indexCurso === cursoKey &&
                                                                     indexProfessor === profKey &&
                                                                     indexHorario === horarioKey &&
                                                                     indexDia === diaKey ? (
                                                                         <h3>
                                                                             <div className="" style={{backgroundColor:"white"}}>
                                                                                 <div className="card-body"> 
-                                                                                    <form onSubmit={handleSubmit(onSubmit)}>
+                                                                                    <form onSubmit={handleSubmit(onCadastrarHorario)}>
                                                                                         <center><label>Cadastrar horário</label></center>
-                                                                                        <div className="input-group mb-3">
-                                                                                            <label className="input-group-text" htmlFor="inputGroupSelect01">Cadeira:</label>
-                                                                                            <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
-                                                                                                <option value="0">lógica</option>
-                                                                                                <option value="1">lfa</option>
-                                                                                                <option value="2">Mat. comp.</option>
-                                                                                                <option value="3">Poo</option>
-                                                                                            </select>
+                                                                                        <div className="mb-3">
+                                                                                            <label className="form-label">*Disciplina:</label>
+                                                                                            <input type="text" defaultValue="" {...register("cadeira",{required:true,maxLength:60})} className="form-control" placeholder="Disciplina"/>
+                                                                                            {errors?.disciplina?.type === "required" && <p className="text-danger">*campo obrigatório</p>}
+                                                                                            {errors?.disciplina?.type === "maxLength" && <p className="text-danger">*Insira até 60 caracteres</p>}
                                                                                         </div>
-                                                                                        <div className="input-group mb-3">
-                                                                                            <label className="input-group-text" htmlFor="inputGroupSelect01">Curso:</label>
-                                                                                            <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
-                                                                                                <option value="0">C.C</option>
-                                                                                                <option value="1">Software</option>
-                                                                                                <option value="2">Civl</option>
-                                                                                                <option value="3">Produção</option>
-                                                                                            </select>
-                                                                                        </div>
+                                                                                        <input type="hidden" {...register("id_professor",{required:true,maxLength:60,value:professor.id_professor})} className="form-control"/>
+                                                                                        <input type="hidden" {...register("indice_professor",{value:profKey})} className="form-control"/>
+                                                                                        <input type="hidden" {...register("area",{value:indexCurso})} className="form-control"/>
+                                                                                        <input type="hidden" {...register("dia",{value:indexDia})} className="form-control"/>
+                                                                                        <input type="hidden" {...register("horario",{value:indexHorario})} className="form-control"/>
                                                                                         <div className="d-grid gap-2">
                                                                                             <input type="submit" className="btn btn-success" value="SALVAR"/>
                                                                                             <button className="btn btn-secondary" onClick={editarHorario}>CANCELAR</button>
@@ -288,7 +266,7 @@ const AgendaProf = ()=>{
                                                         );
                                                     })} 
                                                 </tr>
-                                            );
+                                            );  
                                         })}
                                     </tbody>
                                 </React.Fragment>

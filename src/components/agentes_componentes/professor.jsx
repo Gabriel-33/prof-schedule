@@ -1,10 +1,53 @@
 import { useForm } from "react-hook-form";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
+import { useEffect, useState } from "react";
 const Professor = ()=>{
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
-    const onSubmit = (data) => {
-        alert("Form válido!");
+    const { register,reset, handleSubmit, watch, formState: { errors } } = useForm();
+    const [cursos,setCursos] = useState([]);
+    const onSubmit = async(data) => {
+        reset();
+         try {
+            const response = await axios.post('http://localhost:8080/cadastrar_professor', 
+            { prof_nome: data.nome_professor,prof_area:data.area_professor,prof_horario:'' });
+            toast.success('Professor cadastrado com sucesso!', {
+                position: "top-center",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+        } catch (error) {
+            console.error(error);
+        };
     };
+    useEffect(()=>{
+        axios.get('http://localhost:8080/listar_cursos')
+        .then(response => {
+            setCursos(response.data);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    },[]); 
     return(
+        <>
+        <ToastContainer
+            position="top-center"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+        />
         <form onSubmit={handleSubmit(onSubmit)}>
             <center><label>PROFESSOR</label></center>
             <div className="mb-3">
@@ -16,34 +59,18 @@ const Professor = ()=>{
             <div className="input-group mb-3">
                 <label className="input-group-text" htmlFor="inputGroupSelect01">Área:</label>
                 <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
-                    <option value="0">Computação</option>
-                    <option value="1">Software</option>
-                    <option value="2">Civíl</option>
-                    <option value="3">Produção</option>
-                    <option value="4">Mecânica</option>
+                    {
+                        cursos.map((curso,indexCurso)=>(
+                            <option value={indexCurso} key={indexCurso}>{curso._id}</option>
+                        ))
+                    };
                 </select>
             </div>
-            {/* <div className="mb-3">
-                <label className="form-label">*SIAPE:</label>
-                <input type="number" defaultValue="" {...register("siape_professor",{required:true, min: 1000, max: 9999 })} className="form-control" placeholder="name@example.com"/>
-                {errors?.siape_professor?.type === "required" && <p className="text-danger">*campo obrigatório</p>}
-                {errors?.siape_professor?.type === "min" && <p className="text-danger">*Insira um siape válido(entre 1000 e 9999)</p>}
-                {errors?.siape_professor?.type === "max" && <p className="text-danger">*Insira um siape válido(entre 1000 e 9999)</p>}
-            </div>
-            <div className="mb-3">
-                <label className="form-label">*SENHA:</label>
-                <input type="password" defaultValue="" {...register("senha_professor",{required:true,maxLength:60})} className="form-control" placeholder="name@example.com"/>
-                {errors?.senha_professor?.type === "required" && <p className="text-danger">*campo obrigatório</p>}
-                {errors?.senha_professor?.type === "maxLength" && <p className="text-danger">*Insira até 60 caracteres</p>}
-            </div>
-            <div className="mb-3">
-                <label className="form-label">IMAGEM:</label>
-                <input type="file" defaultValue=""  className="form-control" placeholder="name@example.com"/>
-            </div>  */}
             <div className="d-grid gap-2">
                 <input type="submit" className="btn btn-success" value="SALVAR"/>
             </div> 
         </form>
+        </>
     )
 }
 export default Professor

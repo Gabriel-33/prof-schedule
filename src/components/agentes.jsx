@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React,{useState,useMemo } from "react";
 import Professor from "./agentes_componentes/professor";
 import Curso from "./agentes_componentes/curso";
 import Local from "./agentes_componentes/local";
@@ -14,7 +14,7 @@ const Agentes = (prop)=>{
                 <div className="agente_form">
                     <div className="card cadastro_forms">
                         <div className="card-body">
-                            {prop.agentePage === 1 && <Professor/>}
+                            {prop.agentePage === 1 && <Professor agenda={prop.agenda} setAgenda={prop.setAgenda}/>}
                             {prop.agentePage === 2 && <Curso/>}
                             {prop.agentePage === 3 && <Local/>}
                         </div>
@@ -24,4 +24,4 @@ const Agentes = (prop)=>{
         </>
     )
 }
-export default Agentes;
+export const AgentesMemoized = React.memo(Agentes);
