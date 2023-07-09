@@ -23,8 +23,10 @@ const AgendaSemestre = (prop)=>{
     const [diaKey,setDiaKey] = useState(false);
 
     const onCadastrarAgenda = async(data) => {
-        console.log(data);
-        reset();
+        setCursoKey(false);
+        setCadeiraKey(false);
+        setHorarioKey(false);
+        setDiaKey(false);
         prop.agenda[data.indice_curso].semestre[data.indice_cadeira].horario.push({
             "horario": data.horario,
             "dia": data.dia,
@@ -39,13 +41,10 @@ const AgendaSemestre = (prop)=>{
         } catch (error) {
             console.error(error);
         };
-        setCursoKey(false);
-        setCadeiraKey(false);
-        setHorarioKey(false);
-        setDiaKey(false);
     }
     const editarHorario = (prop)=>{
-        reset();
+        const dataExcluir = prop.target.getAttribute('data-excluir');
+
         const KeyCurso = prop.target.getAttribute("data-curso");
 
         const keyCadeira= prop.target.getAttribute("data-cadeira");
@@ -53,14 +52,56 @@ const AgendaSemestre = (prop)=>{
         const KeyHorario = prop.target.getAttribute("data-horario");
 
         const KeyDia = prop.target.getAttribute("data-dia");
+        
+        reset();
+        if(!dataExcluir){
+            setCursoKey(parseInt(KeyCurso));
+            setCadeiraKey(parseInt(keyCadeira));
+            setHorarioKey(parseInt(KeyHorario));
+            setDiaKey(parseInt(KeyDia));
+        }
+    }
+    const onEditarHorario = async(data)=>{
+        console.log(prop.agenda);
+        const KeyCurso = data.indice_curso;
 
-        setCursoKey(parseInt(KeyCurso));
-        setCadeiraKey(parseInt(keyCadeira));
-        setHorarioKey(parseInt(KeyHorario));
-        setDiaKey(parseInt(KeyDia));
+        const keyCadeira= data.indice_cadeira;
+
+        const KeyHorario = data.horario;
+
+        const KeyDia = data.dia;
+
+        const horario_atualizado = {
+            "horario": data.horario,
+            "dia": data.dia,
+            "disciplina": data.disciplina,            
+            "professor": data.nome_professor
+        };
+
+        const buscar_horario_semestre = prop.agenda[KeyCurso].semestre[keyCadeira];
+        const index = buscar_horario_semestre.horario.findIndex((value) => 
+        value.dia == KeyDia && value.horario == KeyHorario);
+        let id_semestre = buscar_horario_semestre.id_curso;
+        let novo_horario_semestre = prop.agenda[data.indice_curso].semestre[data.indice_cadeira];
+
+        if(index!=-1){
+            buscar_horario_semestre.horario.splice(index, 1,horario_atualizado);
+            try {
+                const response = await axios.put('http://localhost:8080/editar_curso_horario', { data: novo_horario_semestre,id_semestre:data.id_semestre });
+                //console.log(response.data);
+            } catch (error) {
+                console.error(error);
+            };
+        }
+        /* let novo_horario = buscar_horario_semestre.horario.splice(index,1,buscar_horario_semestre); */
+        reset();
+        setCursoKey(false);
+        setCadeiraKey(false);
+        setHorarioKey(false);
+        setDiaKey(false);
     }
     const onExcluirHorario = async(data)=>{
-        reset();
+        
         const KeyCurso = data.target.getAttribute("data-curso");
         const keyCadeira= data.target.getAttribute("data-cadeira");
         const KeyHorario = data.target.getAttribute("data-horario");
@@ -73,15 +114,15 @@ const AgendaSemestre = (prop)=>{
         if(index!=-1){
             try {
                 const response = await axios.put('http://localhost:8080/editar_curso_horario', { data: buscar_horario_semestre,id_semestre:id_semestre });
+                reset();
+                setCursoKey(false);
+                setCadeiraKey(false);
+                setHorarioKey(false);
+                setDiaKey(false);
             } catch (error) {
                 console.error(error);
             };
-        } 
-        setCursoKey(false);
-        setCadeiraKey(false);
-        setHorarioKey(false);
-        setDiaKey(false);
-
+        }
     }
     useEffect(() => {
         axios.get('http://localhost:8080/listar_professores')
@@ -137,18 +178,52 @@ const AgendaSemestre = (prop)=>{
                                                             >
                                                                 {horarioValue.map((value, indexHagenda) => { 
                                                                     return JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify({horario:value.horario,dia:value.dia}) &&(
+                                                                        indexCurso === cursoKey &&
                                                                         indexCadeira === cadeiraKey &&
                                                                         indexHorario === horarioKey &&
                                                                         indexDia === diaKey ? (
+                                                                            
                                                                             <h3 key={indexHagenda}>
                                                                                 <div style={{backgroundColor:"white"}}>
                                                                                     <div className="card-body"> 
-                                                                                        editar
+                                                                                        <form onSubmit={handleSubmit(onEditarHorario)}>
+                                                                                            <center><label>Editar horário</label></center>
+                                                                                            <div className="mb-3">
+                                                                                                <label className="form-label">*Disciplina:</label>
+                                                                                                <input type="text" defaultValue="" {...register("disciplina",{required:true,maxLength:60,value:value.disciplina})} className="form-control" placeholder="Disciplina"/>
+                                                                                                {errors?.disciplina?.type === "required" && <p className="text-danger">*campo obrigatório</p>}
+                                                                                                {errors?.disciplina?.type === "maxLength" && <p className="text-danger">*Insira até 60 caracteres</p>}
+                                                                                            </div>
+                                                                                            <input type="hidden" {...register("id_semestre",{value:itemCadeira.id_curso})} className="form-control"/>
+                                                                                            <input type="hidden" {...register("indice_curso",{value:cursoKey})} className="form-control"/>
+                                                                                            <input type="hidden" {...register("indice_cadeira",{value:cadeiraKey})} className="form-control" />
+                                                                                            <input type="hidden" {...register("dia",{value:diaKey})} className="form-control" />
+                                                                                            <input type="hidden"  {...register("horario",{value:horarioKey})} className="form-control"/>
+                                                                                            <div className="input-group mb-3">
+                                                                                                <label className="input-group-text" htmlFor="inputGroupSelect01">Professor:</label>
+                                                                                                <select className="form-select" id="inputGroupSelect01" {...register("nome_professor",{required:true,maxLength:60})}>
+                                                                                                    {
+                                                                                                        professor[indexCurso]!=undefined?
+                                                                                                        professor[indexCurso].professor.map((professor_nome,indexProfessor)=>{
+                                                                                                            return(
+                                                                                                                <option defaultValue={value.professor} key={indexProfessor}>{professor_nome.professor_nome}</option>
+                                                                                                            );
+                                                                                                        })
+                                                                                                        : <option key={-1}>Sem professor</option>
+                                                                                                    }
+                                                                                                
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div className="d-grid gap-2">
+                                                                                                <input type="submit" className="btn btn-success" value="SALVAR"/>
+                                                                                                <button className="btn btn-secondary" onClick={editarHorario}>CANCELAR</button>
+                                                                                            </div> 
+                                                                                        </form>
                                                                                     </div>
                                                                                 </div>
                                                                             </h3>
                                                                         ):(
-                                                                            <h6 key={indexHagenda}
+                                                                            <h6 key={indexHagenda} onClick={editarHorario}
                                                                             >
                                                                                 <CardComponentSem 
                                                                                     txt1={value.disciplina} 
@@ -158,6 +233,8 @@ const AgendaSemestre = (prop)=>{
                                                                                     dataHorario={indexHorario}
                                                                                     dataDia={indexDia}
                                                                                     onExcluirHorario={onExcluirHorario}
+                                                                                    onEditarHorario={onEditarHorario}
+                                                                                    
                                                                                 />
                                                                             </h6>
                                                                         )
@@ -216,7 +293,7 @@ const AgendaSemestre = (prop)=>{
                                                                                 data-horario={indexHorario}
                                                                                 data-dia={indexDia}
                                                                                 onClick={editarHorario}
-                                                                                >
+                                                                            >
                                                                                 +
                                                                             </h6>
                                                                         ):(

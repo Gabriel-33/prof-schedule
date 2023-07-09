@@ -57,6 +57,7 @@ export const CardComponentSem = (prop)=>{
             <br></br>
             <button 
                 className='btn btn-danger'
+                data-excluir="true"
                 data-cadeira={prop.dataCadeira}
                 data-curso={prop.dataCurso}
                 data-dia={prop.dataDia}
