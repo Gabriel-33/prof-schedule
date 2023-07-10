@@ -124,6 +124,40 @@ const AgendaLab = (prop) => {
         setHorarioKey(false);
         setDiaKey(false);
     }
+    const onExcluirAgenda = async(data) => {
+        
+        const id_semestre = data.target.getAttribute("data-id-semestre");
+        console.log(id_semestre)
+        const KeyLab = data.target.getAttribute("data-lab");
+
+        const KeyLocal = data.target.getAttribute("data-semestre");  
+
+        const KeyDia = data.target.getAttribute("data-dia");
+
+        const KeyHorario = data.target.getAttribute("data-horario");
+
+        const buscar_horario_lab = prop.agendaLab[KeyLab].local[KeyLocal];
+        const index = buscar_horario_lab.horario.findIndex((value) => 
+        value.dia == KeyDia && value.horario == KeyHorario);
+        let id_lab = buscar_horario_lab.id_curso;
+        if(index!=-1){
+            try {
+                let novo_horario_lab = prop.agendaLab[KeyLab].local[KeyLocal].horario;
+
+                novo_horario_lab.splice(index, 1);
+                const response = await axios.put('http://localhost:8080/editar_local_horario', { novo_horario: novo_horario_lab,id_semestre:id_semestre });
+                //console.log(response.data);
+                //edite o curso
+            } catch (error) {
+                console.log(error);
+            };
+        }
+        reset();
+        setLabKey(false);
+        setLocalKey(false);
+        setHorarioKey(false);
+        setDiaKey(false);
+    }
     useEffect(() => {
         axios.get('http://localhost:8080/listar_cursos').then(response => {
             setCurso(response.data);
@@ -138,7 +172,7 @@ const AgendaLab = (prop) => {
         }).catch(error => {
             console.error(error);
         });
-        console.log(prop.agendaLab)
+        //console.log(prop.agendaLab)
     }, []);
     return (
         <React.Fragment>
@@ -151,7 +185,7 @@ const AgendaLab = (prop) => {
                         return (
                         <React.Fragment key={`${indexLab}-${indexLocal}`}>
                             <thead>
-                            <tr key={indexLocal}>
+                            <tr key={`header-${indexLocal}`}>
                                 <th>lab<br></br>{local.numero_local}</th>
                                 <th>Segunda</th>
                                 <th>Terça</th>
@@ -163,22 +197,23 @@ const AgendaLab = (prop) => {
                             <tbody>
                             {horarios.map((horario, indexHorario) => {
                                 return (
-                                    <tr key={indexHorario}>
+                                    <tr key={`row-${indexHorario}`}>
                                         <td>{horario}</td>
                                         {dias.map((dia, indexDia) => {
+                                            let form_value = local.horario.find((value) => JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify({ horario: value.horario, dia: value.dia }));
                                             return local.horario.some((value) => JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify({ horario: value.horario, dia: value.dia })) ? (
                                                     indexLab === labKey &&
                                                     indexLocal === localKey &&
                                                     indexDia === diaKey &&
                                                     indexHorario === horarioKey?(
-                                                    <td key={`${indexLab}-${indexLocal}-${indexDia}-${indexHorario}`}>
+                                                    <td key={`form-${indexLab}-${indexLocal}-${indexDia}-${indexHorario}`}>
                                                         <div style={{backgroundColor:"white"}}>
                                                             <div className="card-body"> 
                                                                 <form onSubmit={handleSubmit(onEditarAgenda)}>
                                                                     <center><label>Editar horário</label></center>
                                                                     <div className="mb-3">
                                                                         <label className="form-label">*Disciplina:</label>
-                                                                        <input type="text" defaultValue="" {...register("disciplina",{required:true,maxLength:60})} className="form-control" placeholder="Disciplina"/>
+                                                                        <input type="text" defaultValue="" {...register("disciplina",{required:true,maxLength:60,value:form_value.disciplina})} className="form-control" placeholder="Disciplina"/>
                                                                         {errors?.disciplina?.type === "required" && <p className="text-danger">*campo obrigatório</p>}
                                                                         {errors?.disciplina?.type === "maxLength" && <p className="text-danger">*Insira até 60 caracteres</p>}
                                                                     </div>
@@ -222,8 +257,9 @@ const AgendaLab = (prop) => {
                                                         </div>
                                                     </td>
                                                 ):(
-                                                    <td onClick={adicionarAgendaLab}>
+                                                    <td key={`card-${indexLab}-${indexLocal}-${indexDia}-${indexHorario}`}>
                                                         {local.horario.map((localHorario, localHorarioIndex) => {
+                                                        
                                                         return (
                                                             JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify({ horario: localHorario.horario, dia: localHorario.dia }) && (
                                                             <CardComponentLab 
@@ -231,10 +267,13 @@ const AgendaLab = (prop) => {
                                                                 txt1={localHorario.disciplina}
                                                                 txt2={localHorario.professor}
                                                                 txt3={localHorario.curso}
+                                                                idSemestre={local.id_curso}
                                                                 dataLab={indexLab}
                                                                 dataSemestre={indexLocal}
                                                                 dataDia={indexDia}
                                                                 dataHorario={indexHorario}
+                                                                editarAgenda={adicionarAgendaLab}
+                                                                excluirAgenda={onExcluirAgenda}
                                                             />
                                                             )
                                                         );
@@ -242,7 +281,7 @@ const AgendaLab = (prop) => {
                                                     </td>
                                                 )
                                             ) : (
-                                            <td>
+                                            <td key={`empty-${indexLab}-${indexLocal}-${indexDia}-${indexHorario}`}>
                                                 {indexLab === labKey &&
                                                     indexLocal === localKey &&
                                                     indexDia === diaKey &&
@@ -323,7 +362,7 @@ const AgendaLab = (prop) => {
                 );
                 })}
             </table>
-            </React.Fragment>
+        </React.Fragment>
 
     );
 }

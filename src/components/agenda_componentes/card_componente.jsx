@@ -84,9 +84,24 @@ export const CardComponentLab = (prop)=>{
                 data-semestre={prop.dataSemestre}
                 data-dia={prop.dataDia}
                 data-horario={prop.dataHorario}
+                onClick={prop.editarAgenda}
             >
                 <FontAwesomeIcon
                     icon={faPencil}  
+                />
+            </button>
+            <br></br>
+            <button 
+                className='btn btn-danger'
+                data-id-semestre={prop.idSemestre}
+                data-lab={prop.dataLab}
+                data-semestre={prop.dataSemestre}
+                data-dia={prop.dataDia}
+                data-horario={prop.dataHorario}
+                onClick={prop.excluirAgenda}
+            >
+                <FontAwesomeIcon
+                    icon={faTrash}  
                 />
             </button>           
         </div>
