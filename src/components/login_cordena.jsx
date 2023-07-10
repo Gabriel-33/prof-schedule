@@ -1,11 +1,30 @@
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form";
-const LoginCordena = () =>{
+import axios from 'axios';
+const LoginCordena = (data) =>{
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
     const navigate = useNavigate();
     const onSubmit = (data) => {
-        navigate("/dashboard");
+        const email_cordenacao = data.email_cordenacao;
+        const senha_cordenacao = data.senha_cordenacao;
+
+        try {
+            axios.post('http://localhost:8080/login', {
+                email: email_cordenacao,
+                senha: senha_cordenacao
+            }).then(response => {
+                console.log(response.data);
+                navigate("/dashboard");
+            }).catch(error => {
+                console.error('Error:', error);
+            });
+
+        } catch (error) {
+            console.error(error)
+        };
+
+        //console.log(data)
     };
     return(
         <form onSubmit={handleSubmit(onSubmit)}>

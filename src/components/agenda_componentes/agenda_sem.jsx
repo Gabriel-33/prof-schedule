@@ -4,8 +4,11 @@ import { useForm } from "react-hook-form";
 import {CardComponentSem} from "./card_componente";
 import axios from 'axios';
 const AgendaSemestre = (prop)=>{
+    
     const { register,reset, handleSubmit, watch, formState: { errors } } = useForm();
+
     const [professor,setProfessor] = useState([]);
+
     const [horarios,SetHorarios] = 
 
     useState(["8-10h","10-12h","12-13:30h","13:30 - 15:30","15:30 - 17:30"]);

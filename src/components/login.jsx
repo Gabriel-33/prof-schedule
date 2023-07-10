@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form";
-import LoginProf from "./login_prof";
+
 import LoginCordena from "./login_cordena";
 const login = ()=>{
     const[tipo_user,setTipoUser] = useState(1);
