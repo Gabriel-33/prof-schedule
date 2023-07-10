@@ -81,10 +81,13 @@ export const CardComponentLab = (prop)=>{
             <button 
                 className='btn btn-primary'
                 data-lab={prop.dataLab}
+                data-semestre={prop.dataSemestre}
                 data-dia={prop.dataDia}
                 data-horario={prop.dataHorario}
             >
-                editar
+                <FontAwesomeIcon
+                    icon={faPencil}  
+                />
             </button>           
         </div>
     );

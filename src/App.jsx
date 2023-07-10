@@ -10,6 +10,7 @@ function App() {
   const[agendaPage,setAgendaPage] = useState(1);
   const [agendaProf,setAgendaProf] = useState([]);
   const [agendaSem,setAgendaSem] = useState([]);
+  const [agendaLab,setAgendaLab] = useState([]);
   useEffect(()=>{
     if(agendaProf.length === 0){
       axios.get('http://localhost:8080/listar_professores')
@@ -27,7 +28,15 @@ function App() {
         console.error(error);
       });
     }
-  },[agendaProf,agendaSem]);
+    if(agendaLab.length === 0){
+      axios.get('http://localhost:8080/listar_local')
+      .then(response => {
+        setAgendaLab(response.data);
+      }).catch(error => {
+        console.error(error);
+      });
+    }
+  },[agendaProf,agendaSem,agendaLab]);
   return (
     <>
       <Menu page={page} setPage={setPage}/>
@@ -37,6 +46,7 @@ function App() {
           agendaPage={agendaPage} setAgendaPage={setAgendaPage} 
           agendaProf={agendaProf} setAgendaProf={setAgendaProf}
           agendaSem={agendaSem} setAgendaSem={setAgendaSem}
+          agendaLab={agendaLab} setAgendaLab={setAgendaLab}
           />}
         </div>
       <Footer/>

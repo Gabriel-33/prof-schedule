@@ -2,13 +2,10 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {CardComponentLab} from "./card_componente";
-const AgendaLab = () => {
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
-    const [prof, SetProf] = useState(["Alexandre", "Eurinardo", "Bomfim", "Tati"]);
+import axios from 'axios';
+const AgendaLab = (prop) => {
+    const { register,reset,handleSubmit, formState: { errors } } = useForm();
 
-    const [cadeira, SetCadeira] = useState(["Computação", "Software", "Civíl", "Produção", "Mecânica"]);
-
-    const [cadeiraSelecionada, setCadeiraSelecionada] = useState(0);
 
     const [horarios, SetHorarios] =
 
@@ -18,7 +15,13 @@ const AgendaLab = () => {
 
         useState(["SEGUNDA", "TERÇA", "QUARTA", "QUINTA", "SEXTA"]);
 
+    const [curso,setCurso] = useState([]);
+
+    const [prof,setProf] = useState([]);
+
     const [labKey, setLabKey] = useState(false);
+
+    const [localKey, setLocalKey] = useState(false);
 
     const [diaKey, setDiaKey] = useState(false);
 
@@ -29,175 +32,186 @@ const AgendaLab = () => {
         /* navigate("/dashboard"); */
     };
 
-    const laboratorio = [
-        {
-            "id_lab": 1,
-            "lab": "lab1",
-            "capacidade": 55,
-            "horario": [
-                {
-                    "horario": 1,
-                    "dia": 0,
-                    "disciplina": "lógica",
-                    "curso": "cc",
-                    "professor": "alexandre"
-                },
-                {
-                    "horario": 1,
-                    "dia": 3,
-                    "disciplina": "lógica",
-                    "curso": "cc",
-                    "professor": "alexandre"
-                },
-                {
-                    "horario": 3,
-                    "dia": 0,
-                    "disciplina": "lógica",
-                    "curso": "cc",
-                    "professor": "alexandre"
-                },
-                {
-                    "horario": 3,
-                    "dia": 1,
-                    "disciplina": "lógica",
-                    "curso": "cc",
-                    "professor": "alexandre"
-                },
-                {
-                    "horario": 3,
-                    "dia": 2,
-                    "disciplina": "lógica",
-                    "curso": "cc",
-                    "professor": "alexandre"
-                }
-            ]
-        },
-        {
-            "id_lab": 2,
-            "lab": "lab2",
-            "capacidade": 50,
-            "horario": [
-                {
-                    "horario": 1,
-                    "dia": 0,
-                    "disciplina": "lógica",
-                    "curso": "cc",
-                    "professor": "alexandre"
-                },
-                {
-                    "horario": 0,
-                    "dia": 0,
-                    "disciplina": "lógica",
-                    "curso": "cc",
-                    "professor": "alexandre"
-                },
-                {
-                    "horario": 3,
-                    "dia": 0,
-                    "disciplina": "lógica",
-                    "curso": "cc",
-                    "professor": "alexandre"
-                },
-                {
-                    "horario": 3,
-                    "dia": 1,
-                    "disciplina": "lógica",
-                    "curso": "cc",
-                    "professor": "alexandre"
-                },
-                {
-                    "horario": 3,
-                    "dia": 2,
-                    "disciplina": "lógica",
-                    "curso": "cc",
-                    "professor": "alexandre"
-                }
-            ]
-        }
-    ];
+    
     const adicionarAgendaLab = (prop) => {
-
+        
         const KeyLab = prop.target.getAttribute("data-lab");
+
+        const KeyLocal = prop.target.getAttribute("data-semestre");
 
         const KeyDia = prop.target.getAttribute("data-dia");
 
         const KeyHorario = prop.target.getAttribute("data-horario");
 
         setLabKey(parseInt(KeyLab));
+        setLocalKey(parseInt(KeyLocal));
         setDiaKey(parseInt(KeyDia));
         setHorarioKey(parseInt(KeyHorario));
+        reset();
+    }
+    const onCadastrarAgenda = async(data) => {
+        prop.agendaLab[data.indice_lab].local[data.indice_local].horario.push({
+            "horario": data.horario,
+            "dia": data.dia,
+            "disciplina": data.disciplina,            
+            "professor": data.nome_professor,
+            "local_nome":data.numero_local,
+            "local_numero":data.numero_local,
+            "curso":data.id_curso,
+            "capacidade":50
+        });
+        let novo_horario_semestre = prop.agendaLab[data.indice_lab].local[data.indice_local].horario;
+        console.log(novo_horario_semestre);
+        try {
+            const response = await axios.put('http://localhost:8080/editar_local_horario', { novo_horario: novo_horario_semestre,id_semestre:data.id_semestre });
+            console.log(response.data);
+            //edite o curso
+        } catch (error) {
+            console.error(error);
+        };
+        reset();
+        /* setCursoKey(false);
+        setCadeiraKey(false);
+        setHorarioKey(false);
+        setDiaKey(false); */
+    }
+    const onEditarAgenda = async(data) => {
+        const id_semestre = data.id_semestre;
+
+        const KeyLab = data.indice_lab;
+
+        const KeyLocal = data.indice_local;
+
+        const KeyDia = data.dia;
+
+        const KeyHorario = data.horario;
+        
+        setLabKey(parseInt(KeyLab));
+        setLocalKey(parseInt(KeyLocal));
+        setDiaKey(parseInt(KeyDia));
+        setHorarioKey(parseInt(KeyHorario));
+
+        const novo_horario = {
+            "horario": data.horario,
+            "dia": data.dia,
+            "disciplina": data.disciplina,            
+            "professor": data.nome_professor,
+            "local_nome":data.numero_local,
+            "local_numero":data.numero_local,
+            "curso":data.id_curso,
+            "capacidade":50
+        };    
+
+        const buscar_horario_lab = prop.agendaLab[data.indice_lab].local[data.indice_local];
+        const index = buscar_horario_lab.horario.findIndex((value) => 
+        value.dia == KeyDia && value.horario == KeyHorario);
+        let id_lab = buscar_horario_lab.id_curso;
+        if(index!=-1){
+            try {
+                let novo_horario_lab = prop.agendaLab[data.indice_lab].local[data.indice_local].horario;
+
+                novo_horario_lab.splice(index, 1,novo_horario);
+                const response = await axios.put('http://localhost:8080/editar_local_horario', { novo_horario: novo_horario_lab,id_semestre:id_semestre });
+                console.log(response.data);
+                //edite o curso
+            } catch (error) {
+                console.log(error);
+            };
+        }
+        reset();
+        setLabKey(false);
+        setLocalKey(false);
+        setHorarioKey(false);
+        setDiaKey(false);
     }
     useEffect(() => {
-        laboratorio.map((lab, indexLab) => {
-            const { laboratorio: laboratorio, horario, professor, disciplina } = lab;
+        axios.get('http://localhost:8080/listar_cursos').then(response => {
+            setCurso(response.data);
+            //console.log(response.data);
+        }).catch(error => {
+            console.error(error);
         });
 
-    }, [horarioKey, diaKey]);
+        axios.get('http://localhost:8080/listar_professores_nome').then(response => {
+            setProf(response.data);
+            //console.log(response.data);
+        }).catch(error => {
+            console.error(error);
+        });
+        console.log(prop.agendaLab)
+    }, []);
     return (
         <React.Fragment>
             <table className="table table-striped table-hover table-bordered border-primary">
-                {laboratorio.map((lab, indexLab) => {
-                    const { laboratorio, horario, professor, disciplina } = lab;
-                    return (
+                {prop.agendaLab.map((lab, indexLab) => {
+                const { local: localLab, horario, professor, disciplina } = lab;
+                return (
                     <React.Fragment key={indexLab}>
-                        <thead>
-                            <tr>
-                                <th>{lab.lab}<br></br>{lab.capacidade} alunos</th>
+                    {localLab.map((local, indexLocal) => {
+                        return (
+                        <React.Fragment key={`${indexLab}-${indexLocal}`}>
+                            <thead>
+                            <tr key={indexLocal}>
+                                <th>lab<br></br>{local.numero_local}</th>
                                 <th>Segunda</th>
                                 <th>Terça</th>
                                 <th>Quarta</th>
                                 <th>Quinta</th>
                                 <th>Sexta</th>
                             </tr>
-                        </thead>
-                        <tbody>
-                        {horarios.map((value, indexHorario) => {
-                            return (
-                            <React.Fragment key={indexHorario}>
-                                <tr>
-                                <td>{value}</td>
-                                {dias.map((dia, indexDia) => {
-                                    return lab.horario.map((labH, indexLabh) => {
-                                        return (
-                                            JSON.stringify({ horario: labH.horario, dia: labH.dia }) ===
-                                            JSON.stringify({ horario: indexHorario, dia: indexDia }) && (
-                                            indexLab === labKey && indexDia === diaKey && indexHorario == horarioKey ? (
-                                                    <td
-                                                        key={indexDia}
-                                                        data-lab={indexLab}
-                                                        data-dia={indexDia}
-                                                        data-horario={indexHorario}
-                                                    >
+                            </thead>
+                            <tbody>
+                            {horarios.map((horario, indexHorario) => {
+                                return (
+                                    <tr key={indexHorario}>
+                                        <td>{horario}</td>
+                                        {dias.map((dia, indexDia) => {
+                                            return local.horario.some((value) => JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify({ horario: value.horario, dia: value.dia })) ? (
+                                                    indexLab === labKey &&
+                                                    indexLocal === localKey &&
+                                                    indexDia === diaKey &&
+                                                    indexHorario === horarioKey?(
+                                                    <td key={`${indexLab}-${indexLocal}-${indexDia}-${indexHorario}`}>
                                                         <div style={{backgroundColor:"white"}}>
                                                             <div className="card-body"> 
-                                                                <form onSubmit={handleSubmit(onSubmit)}>
+                                                                <form onSubmit={handleSubmit(onEditarAgenda)}>
                                                                     <center><label>Editar horário</label></center>
+                                                                    <div className="mb-3">
+                                                                        <label className="form-label">*Disciplina:</label>
+                                                                        <input type="text" defaultValue="" {...register("disciplina",{required:true,maxLength:60})} className="form-control" placeholder="Disciplina"/>
+                                                                        {errors?.disciplina?.type === "required" && <p className="text-danger">*campo obrigatório</p>}
+                                                                        {errors?.disciplina?.type === "maxLength" && <p className="text-danger">*Insira até 60 caracteres</p>}
+                                                                    </div>
+                                                                    <input type="hidden" {...register("id_semestre",{value:local.id_curso})} className="form-control"/>
+                                                                    <input type="hidden" {...register("indice_lab",{value:indexLab})} className="form-control"/>
+                                                                    <input type="hidden" {...register("indice_local",{value:indexLocal})} className="form-control" />
+                                                                    <input type="hidden" {...register("dia",{value:diaKey})} className="form-control" />
+                                                                    <input type="hidden"  {...register("horario",{value:horarioKey})} className="form-control"/>
                                                                     <div className="input-group mb-3">
-                                                                        <label className="input-group-text" htmlFor="inputGroupSelect01">Cadeira:</label>
-                                                                        <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
-                                                                            <option value="0">lógica</option>
-                                                                            <option value="1">lfa</option>
-                                                                            <option value="2">Mat. comp.</option>
-                                                                            <option value="3">Poo</option>
+                                                                        <label className="input-group-text" htmlFor="inputGroupSelect01">Curso:</label>
+                                                                        <select className="form-select" id="inputGroupSelect01" {...register("id_curso",{required:true,maxLength:60})}>
+                                                                            {
+                                                                                curso.map((curso,indexCurso)=>{
+                                                                                    return(
+                                                                                        <option key={indexCurso} value={curso._id}>{curso._id}</option>
+                                                                                    );
+                                                                                })
+                                                                            }
                                                                         </select>
                                                                     </div>
                                                                     <div className="input-group mb-3">
                                                                         <label className="input-group-text" htmlFor="inputGroupSelect01">Professor:</label>
-                                                                        <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
-                                                                            <option value="0">Alexandre</option>
-                                                                            <option value="1">Bomfim</option>
-                                                                            <option value="2">Tati</option>
-                                                                            <option value="3">Eurinardo</option>
+    
+                                                                        <select className="form-select" id="inputGroupSelect01" {...register("nome_professor", { required: true, maxLength: 60 })}>
+                                                                            {
+                                                                                prof !== undefined && prof.map((prof, indexProfessor) => {
+                                                                                    return(
+                                                                                        <option key={indexProfessor}>{prof.prof_nome}</option>
+                                                                                    );
+                                                                                })
+                                                                            }
                                                                         </select>
-                                                                    </div>
-                                                                    <div className="input-group mb-3">
-                                                                        <label className="input-group-text" htmlFor="inputGroupSelect01">Curso:</label>
-                                                                        <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
-                                                                            <option value="0">C.C</option>
-                                                                            <option value="1">Software</option>
-                                                                            <option value="2">Civil</option>
-                                                                            <option value="3">Produção</option>
-                                                                        </select>
+    
                                                                     </div>
                                                                     <div className="d-grid gap-2">
                                                                         <input type="submit" className="btn btn-success" value="SALVAR"/>
@@ -207,102 +221,110 @@ const AgendaLab = () => {
                                                             </div>
                                                         </div>
                                                     </td>
-                                                ) : (
-                                                    <td key={indexDia} onClick={adicionarAgendaLab}>
-                                                        <CardComponentLab 
-                                                            key={indexDia}
-                                                            dataLab={indexLab}
-                                                            dataDia={indexDia}
-                                                            dataHorario={indexHorario} 
-                                                            txt1={labH.professor} 
-                                                            txt2={labH.disciplina} 
-                                                            txt3={labH.curso}
-                                                        />
+                                                ):(
+                                                    <td onClick={adicionarAgendaLab}>
+                                                        {local.horario.map((localHorario, localHorarioIndex) => {
+                                                        return (
+                                                            JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify({ horario: localHorario.horario, dia: localHorario.dia }) && (
+                                                            <CardComponentLab 
+                                                                key={localHorarioIndex}
+                                                                txt1={localHorario.disciplina}
+                                                                txt2={localHorario.professor}
+                                                                txt3={localHorario.curso}
+                                                                dataLab={indexLab}
+                                                                dataSemestre={indexLocal}
+                                                                dataDia={indexDia}
+                                                                dataHorario={indexHorario}
+                                                            />
+                                                            )
+                                                        );
+                                                        })}
                                                     </td>
                                                 )
-                                            )
-                                        );
-                                    });
-            
-                                })}
-                                {dias.map((dia, indexDia) => {
-                                    return lab.horario.some((value) => JSON.stringify({ horario: indexHorario, dia: indexDia }) === JSON.stringify({ horario: value.horario, dia: value.dia })) ? null : (
-                                    indexLab === labKey && indexDia === diaKey && indexHorario == horarioKey ? (
-                                        <td
-                                            key={indexDia}
-                                            data-lab={indexLab}
-                                            data-dia={indexDia}
-                                            data-horario={indexHorario}
-                                        >
-                                        <div style={{backgroundColor:"white"}}>
-                                            <div className="card-body"> 
-                                                <form onSubmit={handleSubmit(onSubmit)}>
-                                                    <center><label>Novo horário</label></center>
-                                                    <div className="input-group mb-3">
-                                                        <label className="input-group-text" htmlFor="inputGroupSelect01">Cadeira:</label>
-                                                        <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
-                                                            <option value="0">lógica</option>
-                                                            <option value="1">lfa</option>
-                                                            <option value="2">Mat. comp.</option>
-                                                            <option value="3">Poo</option>
-                                                        </select>
-                                                    </div>
-                                                    <div className="input-group mb-3">
-                                                        <label className="input-group-text" htmlFor="inputGroupSelect01">Professor:</label>
-                                                        <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
-                                                            <option value="0">Alexandre</option>
-                                                            <option value="1">Bomfim</option>
-                                                            <option value="2">Tati</option>
-                                                            <option value="3">Eurinardo</option>
-                                                        </select>
-                                                    </div>
-                                                    <div className="input-group mb-3">
-                                                        <label className="input-group-text" htmlFor="inputGroupSelect01">Curso:</label>
-                                                        <select className="form-select" id="inputGroupSelect01" defaultValue="0" {...register("area_professor",{required:true,maxLength:60})}>
-                                                            <option value="0">C.C</option>
-                                                            <option value="1">Software</option>
-                                                            <option value="2">Civil</option>
-                                                            <option value="3">Produção</option>
-                                                        </select>
-                                                    </div>
-                                                    <div className="d-grid gap-2">
-                                                        <input type="submit" className="btn btn-success" value="SALVAR"/>
-                                                        <button className="btn btn-secondary" onClick={adicionarAgendaLab}>CANCELAR</button>
-                                                    </div> 
-                                                </form>
-                                            </div>
-                                        </div>
-                                        </td>
-                                    ) : (
-                                        indexHorario !=2?(
-                                            <td
-                                                key={indexDia}
-                                                data-lab={indexLab}
-                                                data-dia={indexDia}
-                                                data-horario={indexHorario}
-                                                onClick={adicionarAgendaLab}
-                                            >
-                                            +
+                                            ) : (
+                                            <td>
+                                                {indexLab === labKey &&
+                                                    indexLocal === localKey &&
+                                                    indexDia === diaKey &&
+                                                    indexHorario === horarioKey ? (
+                                                        <div style={{backgroundColor:"white"}}>
+                                                            <div className="card-body"> 
+                                                                <form onSubmit={handleSubmit(onCadastrarAgenda)}>
+                                                                    <center><label>Novo horário</label></center>
+                                                                    <div className="mb-3">
+                                                                        <label className="form-label">*Disciplina:</label>
+                                                                        <input type="text" defaultValue="" {...register("disciplina",{required:true,maxLength:60})} className="form-control" placeholder="Disciplina"/>
+                                                                        {errors?.disciplina?.type === "required" && <p className="text-danger">*campo obrigatório</p>}
+                                                                        {errors?.disciplina?.type === "maxLength" && <p className="text-danger">*Insira até 60 caracteres</p>}
+                                                                    </div>
+                                                                    <input type="hidden" {...register("id_semestre",{value:local.id_curso})} className="form-control"/>
+                                                                    <input type="hidden" {...register("indice_lab",{value:indexLab})} className="form-control"/>
+                                                                    <input type="hidden" {...register("indice_local",{value:indexLocal})} className="form-control" />
+                                                                    <input type="hidden" {...register("dia",{value:diaKey})} className="form-control" />
+                                                                    <input type="hidden"  {...register("horario",{value:horarioKey})} className="form-control"/>
+                                                                    <div className="input-group mb-3">
+                                                                        <label className="input-group-text" htmlFor="inputGroupSelect01">Curso:</label>
+                                                                        <select className="form-select" id="inputGroupSelect01" {...register("id_curso",{required:true,maxLength:60})}>
+                                                                            {
+                                                                                curso.map((curso,indexCurso)=>{
+                                                                                    return(
+                                                                                        <option key={indexCurso} value={curso._id}>{curso._id}</option>
+                                                                                    );
+                                                                                })
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                    <div className="input-group mb-3">
+                                                                        <label className="input-group-text" htmlFor="inputGroupSelect01">Professor:</label>
+    
+                                                                        <select className="form-select" id="inputGroupSelect01" {...register("nome_professor", { required: true, maxLength: 60 })}>
+                                                                            {
+                                                                                prof !== undefined && prof.map((prof, indexProfessor) => {
+                                                                                    return(
+                                                                                        <option key={indexProfessor}>{prof.prof_nome}</option>
+                                                                                    );
+                                                                                })
+                                                                            }
+                                                                        </select>
+    
+                                                                    </div>
+                                                                    <div className="d-grid gap-2">
+                                                                        <input type="submit" className="btn btn-success" value="SALVAR"/>
+                                                                        <button className="btn btn-secondary" onClick={adicionarAgendaLab}>CANCELAR</button>
+                                                                    </div> 
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        indexHorario !== 2 ? (
+                                                            <h6 key={`${indexLab}-${indexLocal}-${indexDia}-${indexHorario}`}
+                                                            data-semestre={indexLocal}
+                                                            data-lab={indexLab}
+                                                            data-dia={indexDia}
+                                                            data-horario={indexHorario}
+                                                            onClick={adicionarAgendaLab}>
+                                                            +
+                                                            </h6>
+                                                        ) : (
+                                                            <h6 key={`${indexLab}-${indexLocal}-${indexDia}-${indexHorario}`}>almoço</h6>
+                                                        )
+                                                    )}
                                             </td>
-                                        ):(
-                                            <td key={indexDia}>
-                                                Almoço
-                                            </td>
-                                        )
-                                    )
-                                    );
-            
-                                })}
-                                </tr>
-                            </React.Fragment>
-                            );
-                        })}
-                        </tbody>
+                                            );
+                                        })}
+                                    </tr>
+                                );
+                            })}
+                            </tbody>
+                        </React.Fragment>
+                        );
+                    })}
                     </React.Fragment>
-                    );
+                );
                 })}
             </table>
-        </React.Fragment>
+            </React.Fragment>
+
     );
 }
 export default AgendaLab;
