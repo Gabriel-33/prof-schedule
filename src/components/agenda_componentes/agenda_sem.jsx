@@ -38,7 +38,14 @@ const AgendaSemestre = (prop)=>{
         });
         let novo_horario_semestre = prop.agenda[data.indice_curso].semestre[data.indice_cadeira];
         try {
-            const response = await axios.put('http://localhost:8080/editar_curso_horario', { data: novo_horario_semestre,id_semestre:data.id_semestre });
+            const response = await axios.put('http://localhost:8080/curso/editar_curso', 
+            { data: novo_horario_semestre,id_semestre:data.id_semestre },
+            {
+                headers: {
+                    'authorization': 'eyJhbGciOiJIUzI1NiJ9.YWRtaW4.3wR8NppWaGIWsvOWQEbo9BtrGKY5FJZ_PSfFcnEKD5g'
+                }
+            }
+            );
             //console.log(response.data);
             //edite o curso
         } catch (error) {
@@ -90,7 +97,14 @@ const AgendaSemestre = (prop)=>{
         if(index!=-1){
             buscar_horario_semestre.horario.splice(index, 1,horario_atualizado);
             try {
-                const response = await axios.put('http://localhost:8080/editar_curso_horario', { data: novo_horario_semestre,id_semestre:data.id_semestre });
+                const response = await axios.put('http://localhost:8080/curso/editar_curso', 
+                { data: novo_horario_semestre,id_semestre:data.id_semestre },
+                {
+                    headers: {
+                        'authorization': 'eyJhbGciOiJIUzI1NiJ9.YWRtaW4.3wR8NppWaGIWsvOWQEbo9BtrGKY5FJZ_PSfFcnEKD5g'
+                    }
+                }
+                );
                 //console.log(response.data);
             } catch (error) {
                 console.error(error);
@@ -116,7 +130,12 @@ const AgendaSemestre = (prop)=>{
         let novo_horario = buscar_horario_semestre.horario.splice(index,1)
         if(index!=-1){
             try {
-                const response = await axios.put('http://localhost:8080/editar_curso_horario', { data: buscar_horario_semestre,id_semestre:id_semestre });
+                const response = await axios.put('http://localhost:8080/curso/editar_curso', 
+                { data: buscar_horario_semestre,id_semestre:id_semestre },
+                {headers: {
+                    'authorization': 'eyJhbGciOiJIUzI1NiJ9.YWRtaW4.3wR8NppWaGIWsvOWQEbo9BtrGKY5FJZ_PSfFcnEKD5g'
+                }}
+                );
                 reset();
                 setCursoKey(false);
                 setCadeiraKey(false);
@@ -128,7 +147,12 @@ const AgendaSemestre = (prop)=>{
         }
     }
     useEffect(() => {
-        axios.get('http://localhost:8080/listar_professores')
+        axios.get('http://localhost:8080/professor/listar_professores',
+        {
+            headers: {
+                'authorization': 'eyJhbGciOiJIUzI1NiJ9.YWRtaW4.3wR8NppWaGIWsvOWQEbo9BtrGKY5FJZ_PSfFcnEKD5g'
+            }
+        })
         .then(response => {
             setProfessor(response.data);
             console.log(professor);

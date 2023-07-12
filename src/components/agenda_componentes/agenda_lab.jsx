@@ -63,17 +63,21 @@ const AgendaLab = (prop) => {
         let novo_horario_semestre = prop.agendaLab[data.indice_lab].local[data.indice_local].horario;
         console.log(novo_horario_semestre);
         try {
-            const response = await axios.put('http://localhost:8080/editar_local_horario', { novo_horario: novo_horario_semestre,id_semestre:data.id_semestre });
+            const response = await axios.put('http://localhost:8080/local/editar_local_horario', 
+            { novo_horario: novo_horario_semestre,id_semestre:data.id_semestre },
+            {headers: {
+                'authorization': 'eyJhbGciOiJIUzI1NiJ9.YWRtaW4.3wR8NppWaGIWsvOWQEbo9BtrGKY5FJZ_PSfFcnEKD5g'
+            }});
             console.log(response.data);
             //edite o curso
         } catch (error) {
             console.error(error);
         };
         reset();
-        /* setCursoKey(false);
-        setCadeiraKey(false);
+        setLabKey(false);
+        setLocalKey(false);
         setHorarioKey(false);
-        setDiaKey(false); */
+        setDiaKey(false);
     }
     const onEditarAgenda = async(data) => {
         const id_semestre = data.id_semestre;
@@ -111,7 +115,11 @@ const AgendaLab = (prop) => {
                 let novo_horario_lab = prop.agendaLab[data.indice_lab].local[data.indice_local].horario;
 
                 novo_horario_lab.splice(index, 1,novo_horario);
-                const response = await axios.put('http://localhost:8080/editar_local_horario', { novo_horario: novo_horario_lab,id_semestre:id_semestre });
+                const response = await axios.put('http://localhost:8080/local/editar_local_horario', 
+                { novo_horario: novo_horario_lab,id_semestre:id_semestre },
+                {headers: {
+                    'authorization': 'eyJhbGciOiJIUzI1NiJ9.YWRtaW4.3wR8NppWaGIWsvOWQEbo9BtrGKY5FJZ_PSfFcnEKD5g'
+                }});
                 console.log(response.data);
                 //edite o curso
             } catch (error) {
@@ -145,7 +153,11 @@ const AgendaLab = (prop) => {
                 let novo_horario_lab = prop.agendaLab[KeyLab].local[KeyLocal].horario;
 
                 novo_horario_lab.splice(index, 1);
-                const response = await axios.put('http://localhost:8080/editar_local_horario', { novo_horario: novo_horario_lab,id_semestre:id_semestre });
+                const response = await axios.put('http://localhost:8080/local/editar_local_horario', 
+                { novo_horario: novo_horario_lab,id_semestre:id_semestre },
+                {headers: {
+                    'authorization': 'eyJhbGciOiJIUzI1NiJ9.YWRtaW4.3wR8NppWaGIWsvOWQEbo9BtrGKY5FJZ_PSfFcnEKD5g'
+                }});
                 //console.log(response.data);
                 //edite o curso
             } catch (error) {
@@ -159,14 +171,18 @@ const AgendaLab = (prop) => {
         setDiaKey(false);
     }
     useEffect(() => {
-        axios.get('http://localhost:8080/listar_cursos').then(response => {
+        axios.get('http://localhost:8080/curso/listar_curso',{headers: {
+            'authorization': 'eyJhbGciOiJIUzI1NiJ9.YWRtaW4.3wR8NppWaGIWsvOWQEbo9BtrGKY5FJZ_PSfFcnEKD5g'
+        }}).then(response => {
             setCurso(response.data);
             //console.log(response.data);
         }).catch(error => {
             console.error(error);
         });
 
-        axios.get('http://localhost:8080/listar_professores_nome').then(response => {
+        axios.get('http://localhost:8080/professor/listar_professor',{headers: {
+            'authorization': 'eyJhbGciOiJIUzI1NiJ9.YWRtaW4.3wR8NppWaGIWsvOWQEbo9BtrGKY5FJZ_PSfFcnEKD5g'
+        }}).then(response => {
             setProf(response.data);
             //console.log(response.data);
         }).catch(error => {

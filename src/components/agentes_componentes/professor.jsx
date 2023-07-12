@@ -9,8 +9,18 @@ const Professor = ()=>{
     const onSubmit = async(data) => {
         reset();
          try {
-            const response = await axios.post('http://localhost:8080/cadastrar_professor', 
-            { prof_nome: data.nome_professor,prof_area:data.area_professor,prof_horario:'' });
+            await axios.post('http://localhost:8080/professor/cadastrar_professor', 
+                { 
+                    prof_nome: data.nome_professor,
+                    prof_area: data.area_professor,
+                    prof_horario: '',
+                },
+                {
+                    headers: {
+                        'authorization': 'eyJhbGciOiJIUzI1NiJ9.YWRtaW4.3wR8NppWaGIWsvOWQEbo9BtrGKY5FJZ_PSfFcnEKD5g'
+                    }
+                }
+            );
             toast.success('Professor cadastrado com sucesso!', {
                 position: "top-center",
                 autoClose: 2000,
@@ -26,13 +36,19 @@ const Professor = ()=>{
         };
     };
     useEffect(()=>{
-        axios.get('http://localhost:8080/listar_cursos')
-        .then(response => {
-            setCursos(response.data);
-        })
-        .catch(error => {
-            console.error(error);
-        });
+        if(cursos.length === 0){
+            axios.get('http://localhost:8080/curso/listar_curso',{
+                headers: {
+                    'authorization': 'eyJhbGciOiJIUzI1NiJ9.YWRtaW4.3wR8NppWaGIWsvOWQEbo9BtrGKY5FJZ_PSfFcnEKD5g'
+                }
+            })
+            .then(response => {
+                setCursos(response.data);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        }
     },[]); 
     return(
         <>

@@ -10,11 +10,11 @@ const LoginCordena = (data) =>{
         const senha_cordenacao = data.senha_cordenacao;
 
         try {
-            axios.post('http://localhost:8080/login', {
+            axios.post('http://localhost:8080/gestao/login', {
                 email: email_cordenacao,
                 senha: senha_cordenacao
             }).then(response => {
-                console.log(response.data);
+                sessionStorage.setItem('token_valor', 'response.data');
                 navigate("/dashboard");
             }).catch(error => {
                 console.error('Error:', error);

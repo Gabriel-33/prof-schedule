@@ -11,15 +11,6 @@ const login = ()=>{
                 <div className="row login_row">
                     <div className="card login_forms">
                         <div className="card-body">
-                            {/* <div className="mb-3 tipo_user">
-                                <button className={tipo_user === 1 ? "btn btn-light form-control active":"btn btn-primary form-control"} type="button" onClick={()=>setTipoUser(1)}>CORDENAÇÃO</button>
-                                <button className={tipo_user === 2 ? "btn btn-light form-control active":"btn btn-primary form-control"} type="button" onClick={()=>setTipoUser(2)}>PROFESSOR</button>
-                            </div>
-                            {tipo_user === 1 ?(
-                                <LoginCordena/>
-                            ):(
-                                <LoginProf/>
-                            )} */}
                             <LoginCordena/>
                         </div>
                     </div>

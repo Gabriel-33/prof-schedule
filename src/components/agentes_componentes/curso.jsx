@@ -8,8 +8,14 @@ const Curso = ()=>{
         reset();
         for(let i = data.intervalo1; i <= data.intervalo2; i++){
             try {
-                const response = await axios.post('http://localhost:8080/cadastrar_curso', 
-                {curso_nome: data.curso,curso_numero:i});
+                const response = await axios.post('http://localhost:8080/curso/cadastrar_curso', 
+                {curso_nome: data.curso,curso_numero:i},
+                {
+                    headers: {
+                        'authorization': 'eyJhbGciOiJIUzI1NiJ9.YWRtaW4.3wR8NppWaGIWsvOWQEbo9BtrGKY5FJZ_PSfFcnEKD5g'
+                    }
+                }
+                );
              } catch (error) {
                  console.error(error);
              };    

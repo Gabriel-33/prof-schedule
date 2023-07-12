@@ -40,7 +40,14 @@ const AgendaProf = (props) => {
         setHorarioKey(false);
         setDiaKey(false);
         try {
-            const response = await axios.put('http://localhost:8080/editar_professor_horario', { data: novo_horario_professor,id_professor:data.id_professor });
+            const response = await axios.put('http://localhost:8080/professor/editar_professor_horario', 
+            { data: novo_horario_professor,id_professor:data.id_professor },
+            {
+                headers: {
+                    'authorization': 'eyJhbGciOiJIUzI1NiJ9.YWRtaW4.3wR8NppWaGIWsvOWQEbo9BtrGKY5FJZ_PSfFcnEKD5g'
+                }
+            }
+            );
             //console.log(response.data);
         } catch (error) {
             console.error(error);
@@ -63,7 +70,14 @@ const AgendaProf = (props) => {
         if (index !== -1) {
             novo_horario_professor.splice(index, 1,horario_atualizado);
             try {
-                const response = await axios.put('http://localhost:8080/editar_professor_horario', { data: novo_horario_professor,id_professor:data.id_professor });
+                const response = await axios.put('http://localhost:8080/professor/editar_professor_horario', 
+                { data: novo_horario_professor,id_professor:data.id_professor },
+                {
+                    headers: {
+                        'authorization': 'eyJhbGciOiJIUzI1NiJ9.YWRtaW4.3wR8NppWaGIWsvOWQEbo9BtrGKY5FJZ_PSfFcnEKD5g'
+                    }
+                }
+                );
                 //console.log(response.data);
             } catch (error) {
                 console.error(error);
@@ -89,7 +103,14 @@ const AgendaProf = (props) => {
             buscar_horario_professor.horario_professor.splice(index,1);
             //console.log(buscar_horario_professor.horario_professor);
             try {
-                const response = await axios.put('http://localhost:8080/editar_professor_horario', { data: buscar_horario_professor.horario_professor,id_professor:buscar_horario_professor.id_professor });
+                const response = await axios.put('http://localhost:8080/professor/editar_professor_horario', 
+                { data: buscar_horario_professor.horario_professor,id_professor:buscar_horario_professor.id_professor },
+                {
+                    headers: {
+                        'authorization': 'eyJhbGciOiJIUzI1NiJ9.YWRtaW4.3wR8NppWaGIWsvOWQEbo9BtrGKY5FJZ_PSfFcnEKD5g'
+                    }
+                }
+                );
                 //console.log(buscar_horario_professor.horario);
             } catch (error) {
                 console.error(error);
@@ -112,7 +133,12 @@ const AgendaProf = (props) => {
         setDiaKey(parseInt(KeyDia));
     }
     useEffect(() => {
-        axios.get('http://localhost:8080/listar_cursos')
+        console.log(props.agenda)
+        axios.get('http://localhost:8080/curso/listar_curso',{
+            headers: {
+                'authorization': 'eyJhbGciOiJIUzI1NiJ9.YWRtaW4.3wR8NppWaGIWsvOWQEbo9BtrGKY5FJZ_PSfFcnEKD5g'
+            }
+        })
         .then(response => {
             setCursos(prevCursos => [...prevCursos, ...response.data.map(curso => curso._id)]);
         })

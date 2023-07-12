@@ -12,8 +12,14 @@ function App() {
   const [agendaSem,setAgendaSem] = useState([]);
   const [agendaLab,setAgendaLab] = useState([]);
   useEffect(()=>{
+    const token_valor = localStorage.getItem('token_valor');
+    console.log(token_valor)
     if(agendaProf.length === 0){
-      axios.get('http://localhost:8080/listar_professores')
+      axios.get('http://localhost:8080/professor/listar_professores',{
+        headers: {
+          'authorization': 'eyJhbGciOiJIUzI1NiJ9.YWRtaW4.3wR8NppWaGIWsvOWQEbo9BtrGKY5FJZ_PSfFcnEKD5g'
+        }
+      })
       .then(response => {
         setAgendaProf(response.data);
       }).catch(error => {
@@ -21,7 +27,11 @@ function App() {
       });
     }
     if(agendaSem.length === 0){
-      axios.get('http://localhost:8080/listar_cursos')
+      axios.get('http://localhost:8080/curso/listar_curso',{
+        headers: {
+          'authorization': 'eyJhbGciOiJIUzI1NiJ9.YWRtaW4.3wR8NppWaGIWsvOWQEbo9BtrGKY5FJZ_PSfFcnEKD5g'
+        }
+      })
       .then(response => {
         setAgendaSem(response.data);
       }).catch(error => {
@@ -29,7 +39,11 @@ function App() {
       });
     }
     if(agendaLab.length === 0){
-      axios.get('http://localhost:8080/listar_local')
+      axios.get('http://localhost:8080/local/listar_local',{
+        headers: {
+          'authorization': 'eyJhbGciOiJIUzI1NiJ9.YWRtaW4.3wR8NppWaGIWsvOWQEbo9BtrGKY5FJZ_PSfFcnEKD5g'
+        }
+      })
       .then(response => {
         setAgendaLab(response.data);
       }).catch(error => {
